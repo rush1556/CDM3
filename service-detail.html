@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Service Details | Connect Digital Media India</title>
+  <meta name="description" content="Detailed growth breakdown, deliverables, strategy and ROI impact for specialized marketing services by Connect Digital Media.">
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/jpeg" href="assets/logo.jpg">
+  
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- Ambient Glow -->
+  <div class="ambient-mesh" aria-hidden="true"></div>
+  <div class="grid-overlay" aria-hidden="true"></div>
+
+  <!-- Header Navigation -->
+  <header class="site-header" id="site-header">
+    <div class="container header-container">
+      <a href="index.html#hero" class="brand-logo" aria-label="Connect Digital Media">
+        <img src="assets/logo.jpg" alt="Connect Digital Media" class="brand-logo-img">
+      </a>
+
+      <nav aria-label="Main Navigation">
+        <ul class="nav-links">
+          <li><a href="index.html" class="nav-link">Home</a></li>
+          <li><a href="services.html" class="nav-link active" style="color: var(--red-primary);">Services</a></li>
+          <li><a href="about.html" class="nav-link">About Us</a></li>
+          <li><a href="index.html#calculator" class="nav-link">ROI Calculator</a></li>
+          <li><a href="index.html#case-studies" class="nav-link">Case Studies</a></li>
+          <li><a href="index.html#pricing" class="nav-link">Pricing</a></li>
+          <li><a href="index.html#blogs" class="nav-link">Blogs</a></li>
+          <li><a href="contact.html" class="nav-link">Contact Us</a></li>
+        </ul>
+      </nav>
+
+      <div class="header-actions">
+        <a href="https://wa.me/918140502097?text=Hi%20Connect%20Digital%20Media!%20I%20would%20like%20to%20discuss%20services%20for%20my%20business." target="_blank" rel="noopener noreferrer" class="btn btn-whatsapp btn-sm" id="header-whatsapp-btn">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.301-.15-1.78-.878-2.056-.978-.276-.1-.477-.15-.678.15-.2.301-.778.978-.954 1.18-.176.2-.352.226-.653.075-.301-.15-1.272-.469-2.423-1.496-.897-.8-1.503-1.788-1.68-2.089-.176-.301-.019-.464.132-.614.136-.135.301-.352.452-.528.15-.176.2-.301.301-.502.1-.2.05-.376-.025-.527-.075-.15-.678-1.634-.929-2.238-.244-.588-.493-.509-.678-.518-.176-.009-.376-.011-.577-.011-.2 0-.527.075-.803.376s-1.054 1.03-1.054 2.513c0 1.482 1.08 2.913 1.231 3.114.15.2 2.124 3.243 5.145 4.547.719.311 1.28.497 1.718.636.722.229 1.379.197 1.898.119.579-.087 1.78-.727 2.031-1.43.251-.703.251-1.305.176-1.43-.075-.125-.276-.2-.577-.35zM12.04 2C6.516 2 2.028 6.488 2.028 12.012c0 1.956.566 3.784 1.547 5.334L2 22l4.821-1.523c1.492.89 3.228 1.405 5.219 1.405 5.524 0 10.012-4.488 10.012-10.012S17.564 2 12.04 2z"/></svg>
+          <span>WhatsApp</span>
+        </a>
+        <button type="button" class="btn btn-primary btn-sm open-booking-btn">
+          <span>Book Free Audit</span>
+        </button>
+        <button type="button" class="mobile-menu-btn" id="mobile-menu-toggle" aria-label="Toggle Navigation Menu">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Breadcrumb Bar -->
+    <div class="container">
+      <div class="breadcrumb-bar" id="detail-breadcrumb">
+        <a href="index.html">Home</a>
+        <span class="breadcrumb-separator">/</span>
+        <a href="services.html">Services</a>
+        <span class="breadcrumb-separator">/</span>
+        <span id="bc-parent-cat" style="color: var(--text-secondary);">Social Media Marketing</span>
+        <span class="breadcrumb-separator">/</span>
+        <span id="bc-current-sub" style="color: var(--red-primary); font-weight: 700;">Instagram Marketing</span>
+      </div>
+    </div>
+
+    <!-- HERO SECTION -->
+    <section class="service-detail-hero">
+      <div class="container">
+        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; margin-bottom: 24px;">
+          <div class="detail-badge-pill" id="detail-hero-badge" style="margin-bottom: 0;">
+            <span class="pulse-dot"></span>
+            <span id="hero-badge-text">Specialized Growth Discipline</span>
+          </div>
+
+          <!-- Quick Interactive Sub-Service Selector -->
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <label for="subservice-quick-select" style="font-size: 0.85rem; font-weight: 700; color: var(--text-secondary);">Switch Capability:</label>
+            <select id="subservice-quick-select" class="form-select" style="padding: 8px 16px; border-radius: var(--radius-full); font-size: 0.88rem; font-weight: 600; min-width: 260px; background: #ffffff;">
+              <!-- Populated dynamically with all 80+ sub-services -->
+            </select>
+          </div>
+        </div>
+
+        <h1 class="service-detail-title" id="detail-title">Instagram Marketing</h1>
+        <div class="service-detail-tagline" id="detail-tagline">Scale followers, viral reach & direct sales via aesthetic Instagram funnels.</div>
+        <p class="service-detail-desc" id="detail-desc">
+          End-to-end Instagram growth architecture including Reels production, profile aesthetic overhaul, story conversion funnels, and DM sales automations tailored for the Indian demographic.
+        </p>
+
+        <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+          <a href="#" id="hero-wa-action-btn" target="_blank" rel="noopener noreferrer" class="btn btn-whatsapp btn-lg">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.301-.15-1.78-.878-2.056-.978-.276-.1-.477-.15-.678.15-.2.301-.778.978-.954 1.18-.176.2-.352.226-.653.075-.301-.15-1.272-.469-2.423-1.496-.897-.8-1.503-1.788-1.68-2.089-.176-.301-.019-.464.132-.614.136-.135.301-.352.452-.528.15-.176.2-.301.301-.502.1-.2.05-.376-.025-.527-.075-.15-.678-1.634-.929-2.238-.244-.588-.493-.509-.678-.518-.176-.009-.376-.011-.577-.011-.2 0-.527.075-.803.376s-1.054 1.03-1.054 2.513c0 1.482 1.08 2.913 1.231 3.114.15.2 2.124 3.243 5.145 4.547.719.311 1.28.497 1.718.636.722.229 1.379.197 1.898.119.579-.087 1.78-.727 2.031-1.43.251-.703.251-1.305.176-1.43-.075-.125-.276-.2-.577-.35zM12.04 2C6.516 2 2.028 6.488 2.028 12.012c0 1.956.566 3.784 1.547 5.334L2 22l4.821-1.523c1.492.89 3.228 1.405 5.219 1.405 5.524 0 10.012-4.488 10.012-10.012S17.564 2 12.04 2z"/></svg>
+            <span>Inquire for this Service on WhatsApp</span>
+          </a>
+          <button type="button" class="btn btn-primary btn-lg open-booking-btn">
+            <span>Book 30-Min Strategy Audit</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- MAIN DETAIL CONTENT + SIDEBAR -->
+    <section>
+      <div class="container">
+        <div class="detail-layout-grid">
+          
+          <!-- LEFT / MAIN CONTENT -->
+          <div>
+            <!-- Deliverables List -->
+            <div class="detail-section-title">
+              <span class="step-icon">✓</span>
+              <span>Key Included Deliverables</span>
+            </div>
+            <div class="deliverables-box" id="detail-deliverables-list">
+              <!-- Rendered dynamically -->
+            </div>
+
+            <!-- 4-Step Process -->
+            <div class="detail-section-title">
+              <span class="step-icon">⚡</span>
+              <span>Our 4-Step Execution Framework</span>
+            </div>
+            <div class="process-steps-grid" id="detail-process-grid">
+              <!-- Rendered dynamically -->
+            </div>
+
+            <!-- India Market Impact -->
+            <div class="impact-box">
+              <h4>🇮🇳 Strategic Value for Indian Businesses</h4>
+              <p id="detail-impact-text">
+                Instagram is the #1 discovery platform for Indian consumers. Our tailored approach increases profile visits by 300%+ and converts followers into repeat buyers.
+              </p>
+            </div>
+
+            <!-- Tech Stack & Tools -->
+            <div style="background: #ffffff; border: 1px solid var(--border-light); border-radius: var(--radius-xl); padding: 32px; box-shadow: var(--shadow-sm);">
+              <h4 style="font-size: 1.15rem; margin-bottom: 6px;">Recommended Tech Stack & Tools We Deploy</h4>
+              <p style="color: var(--text-secondary); font-size: 0.88rem; margin-bottom: 14px;">We use industry standard software and analytics to execute this service with precision.</p>
+              <div class="tech-tools-bar" id="detail-tools-list">
+                <!-- Rendered dynamically -->
+              </div>
+            </div>
+          </div>
+
+          <!-- RIGHT / SIDEBAR -->
+          <div class="detail-sidebar">
+            <!-- Quick Facts Card -->
+            <div class="sidebar-card">
+              <div class="sidebar-card-title">Quick Facts & Benchmarks</div>
+              
+              <div class="quick-fact-row">
+                <span class="quick-fact-label">Parent Pillar:</span>
+                <span class="quick-fact-value" id="sf-parent-cat">Social Media</span>
+              </div>
+              <div class="quick-fact-row">
+                <span class="quick-fact-label">Target Metric:</span>
+                <span class="quick-fact-value" id="sf-metric" style="color: var(--red-primary);">3.8x Engagement</span>
+              </div>
+              <div class="quick-fact-row">
+                <span class="quick-fact-label">Turnaround Time:</span>
+                <span class="quick-fact-value">5 - 7 Days</span>
+              </div>
+              <div class="quick-fact-row">
+                <span class="quick-fact-label">Pricing in ₹ INR:</span>
+                <span class="quick-fact-value">From ₹14,999/mo</span>
+              </div>
+              <div class="quick-fact-row">
+                <span class="quick-fact-label">Billing Currency:</span>
+                <span class="quick-fact-value">₹ INR (GST Invoices)</span>
+              </div>
+
+              <div style="margin-top: 24px;">
+                <a href="#" id="sidebar-wa-btn" target="_blank" rel="noopener noreferrer" class="btn btn-whatsapp" style="width: 100%; justify-content: center;">
+                  <span>Chat on WhatsApp</span>
+                </a>
+              </div>
+            </div>
+
+            <!-- Other Sub-Services in this Category -->
+            <div class="sidebar-card">
+              <div class="sidebar-card-title">Explore Related Capabilities</div>
+              <ul class="related-sub-list" id="sidebar-related-list">
+                <!-- Populated dynamically -->
+              </ul>
+              
+              <div style="margin-top: 20px; text-align: center;">
+                <a href="services.html" style="font-size: 0.85rem; font-weight: 700; color: var(--red-primary); text-decoration: none;">
+                  ← Back to All 12 Services
+                </a>
+              </div>
+            </div>
+
+            <!-- Direct Contact Card -->
+            <div class="sidebar-card" style="background: var(--bg-dark); color: #ffffff;">
+              <h4 style="color: #ffffff; margin-bottom: 8px;">Need a Fast Quote?</h4>
+              <p style="color: #94a3b8; font-size: 0.85rem; margin-bottom: 20px;">
+                Speak directly with our senior marketing lead in India:
+              </p>
+              <div style="font-size: 0.95rem; margin-bottom: 8px; font-weight: 700; color: var(--red-bright);">
+                📞 +91 81405 02097
+              </div>
+              <div style="font-size: 0.85rem; color: #cbd5e1; margin-bottom: 20px;">
+                ✉️ admin@connectdigitalmedia.co.in
+              </div>
+              <button type="button" class="btn btn-primary btn-sm open-booking-btn" style="width: 100%;">
+                <span>Book Free Growth Session</span>
+              </button>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- BOTTOM CTA BANNER -->
+    <section style="padding: 0 0 90px 0;">
+      <div class="container">
+        <div class="contact-info-panel" style="text-align: center; padding: 56px 36px; border-radius: var(--radius-xl); background: var(--bg-dark); color: #ffffff;">
+          <div class="badge-pill" style="background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.2); color: #ffffff; margin: 0 auto 18px auto;">
+            <span>Accelerate Your Growth</span>
+          </div>
+          <h2 style="font-size: 2.2rem; color: #ffffff; margin-bottom: 14px;">Ready to Scale Your Brand?</h2>
+          <p style="color: #94a3b8; font-size: 1.05rem; max-width: 650px; margin: 0 auto 32px auto; line-height: 1.6;">
+            Connect with our strategy team on WhatsApp to get transparent pricing in ₹ INR, customized case benchmarks, and an actionable 30-day roadmap.
+          </p>
+          <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
+            <a href="https://wa.me/918140502097?text=Hi%20Connect%20Digital%20Media!%20I%20am%20ready%20to%20scale%20my%20business." target="_blank" rel="noopener noreferrer" class="btn btn-whatsapp btn-lg">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.301-.15-1.78-.878-2.056-.978-.276-.1-.477-.15-.678.15-.2.301-.778.978-.954 1.18-.176.2-.352.226-.653.075-.301-.15-1.272-.469-2.423-1.496-.897-.8-1.503-1.788-1.68-2.089-.176-.301-.019-.464.132-.614.136-.135.301-.352.452-.528.15-.176.2-.301.301-.502.1-.2.05-.376-.025-.527-.075-.15-.678-1.634-.929-2.238-.244-.588-.493-.509-.678-.518-.176-.009-.376-.011-.577-.011-.2 0-.527.075-.803.376s-1.054 1.03-1.054 2.513c0 1.482 1.08 2.913 1.231 3.114.15.2 2.124 3.243 5.145 4.547.719.311 1.28.497 1.718.636.722.229 1.379.197 1.898.119.579-.087 1.78-.727 2.031-1.43.251-.703.251-1.305.176-1.43-.075-.125-.276-.2-.577-.35zM12.04 2C6.516 2 2.028 6.488 2.028 12.012c0 1.956.566 3.784 1.547 5.334L2 22l4.821-1.523c1.492.89 3.228 1.405 5.219 1.405 5.524 0 10.012-4.488 10.012-10.012S17.564 2 12.04 2z"/></svg>
+              <span>Chat on WhatsApp (+91 81405 02097)</span>
+            </a>
+            <button type="button" class="btn btn-primary btn-lg open-booking-btn">
+              <span>Book Growth Audit Session</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-top-grid">
+        <!-- Brand Col -->
+        <div class="footer-brand">
+          <a href="index.html#hero" class="brand-logo" aria-label="Connect Digital Media">
+            <img src="assets/logo.jpg" alt="Connect Digital Media" class="brand-logo-img" style="height: 48px;">
+          </a>
+          <!-- Social Handles -->
+          <div class="footer-social-box">
+            <div class="footer-social-title">Connect on Social</div>
+            <div class="footer-social-list">
+              <a href="https://www.instagram.com/connect.digitalmedia" target="_blank" rel="noopener noreferrer" class="social-pill-link instagram" title="Follow Connect Digital Media on Instagram">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+                <span>@connect.digitalmedia</span>
+              </a>
+              <a href="https://www.facebook.com/share/1HX4BHFcEs/" target="_blank" rel="noopener noreferrer" class="social-pill-link facebook" title="Connect with Connect Digital Media on Facebook">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                <span>Facebook</span>
+              </a>
+            </div>
+          </div>
+
+          <div style="margin-top: 16px; font-size: 0.82rem; color: #94a3b8;">
+            📍 Office: Surat - Gujarat • Registered in India • GST Invoices Available • 100% Data-Driven
+          </div>
+        </div>
+
+        <!-- Capabilities Links -->
+        <div class="footer-col">
+          <h4>Our Capabilities</h4>
+          <ul class="footer-links">
+            <li><a href="services.html">All 12 Core Services</a></li>
+            <li><a href="service-detail.html?sub=instagram-marketing">Instagram Marketing</a></li>
+            <li><a href="service-detail.html?sub=meta-ads">Meta Paid Ads</a></li>
+            <li><a href="service-detail.html?sub=google-ads">Google Ads & Search</a></li>
+            <li><a href="service-detail.html?sub=local-seo">Local SEO (Google Maps)</a></li>
+            <li><a href="service-detail.html?sub=whatsapp-marketing">WhatsApp Commerce CRM</a></li>
+          </ul>
+        </div>
+
+        <!-- Resources & Proof -->
+        <div class="footer-col">
+          <h4>Resources & Proof</h4>
+          <ul class="footer-links">
+            <li><a href="index.html#calculator">Indian ROI Calculator (₹)</a></li>
+            <li><a href="index.html#grader">Website Growth Grader</a></li>
+            <li><a href="index.html#case-studies">Indian Case Studies</a></li>
+            <li><a href="index.html#pricing">Pricing Plans (₹ INR)</a></li>
+            <li><a href="index.html#blogs">Marketing Blog Playbooks</a></li>
+            <li><a href="about.html">About Connect Digital Media</a></li>
+            <li><a href="contact.html">Contact Us Directly</a></li>
+          </ul>
+        </div>
+
+        <!-- Office Hubs & Clocks in India -->
+        <div class="footer-col">
+          <h4>Office Hubs in India</h4>
+          <div class="office-clocks-grid" id="office-clocks-container">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>© 2026 Connect Digital Media. Contact: <strong>admin@connectdigitalmedia.co.in</strong> | <strong>+91 81405 02097</strong></div>
+        <div style="display: flex; gap: 20px;">
+          <a href="contact.html" style="color: #94a3b8; text-decoration: none;">Contact Support</a>
+          <a href="#" style="color: #94a3b8; text-decoration: none;">Privacy Policy</a>
+          <a href="#" style="color: #94a3b8; text-decoration: none;">GST Compliant</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- FLOATING WHATSAPP BUTTON -->
+  <a href="https://wa.me/918140502097?text=Hi%20Connect%20Digital%20Media!%20I%20would%20like%20to%20discuss%20digital%20marketing%20services%20for%20my%20business." target="_blank" rel="noopener noreferrer" class="floating-wa-btn" id="floating-whatsapp-widget" aria-label="Chat on WhatsApp">
+    <span class="wa-tooltip">💬 Chat on WhatsApp with Growth Lead!</span>
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.301-.15-1.78-.878-2.056-.978-.276-.1-.477-.15-.678.15-.2.301-.778.978-.954 1.18-.176.2-.352.226-.653.075-.301-.15-1.272-.469-2.423-1.496-.897-.8-1.503-1.788-1.68-2.089-.176-.301-.019-.464.132-.614.136-.135.301-.352.452-.528.15-.176.2-.301.301-.502.1-.2.05-.376-.025-.527-.075-.15-.678-1.634-.929-2.238-.244-.588-.493-.509-.678-.518-.176-.009-.376-.011-.577-.011-.2 0-.527.075-.803.376s-1.054 1.03-1.054 2.513c0 1.482 1.08 2.913 1.231 3.114.15.2 2.124 3.243 5.145 4.547.719.311 1.28.497 1.718.636.722.229 1.379.197 1.898.119.579-.087 1.78-.727 2.031-1.43.251-.703.251-1.305.176-1.43-.075-.125-.276-.2-.577-.35zM12.04 2C6.516 2 2.028 6.488 2.028 12.012c0 1.956.566 3.784 1.547 5.334L2 22l4.821-1.523c1.492.89 3.228 1.405 5.219 1.405 5.524 0 10.012-4.488 10.012-10.012S17.564 2 12.04 2z"/></svg>
+  </a>
+
+  <!-- MULTI-STEP CONSULTATION BOOKING MODAL -->
+  <div class="modal-backdrop" id="booking-modal">
+    <div class="modal-card">
+      <button type="button" class="modal-close-btn" id="close-booking-modal" aria-label="Close Modal">✕</button>
+      
+      <div class="step-indicator-bar">
+        <div class="step-dot active" id="dot-step-1"></div>
+        <div class="step-dot" id="dot-step-2"></div>
+        <div class="step-dot" id="dot-step-3"></div>
+      </div>
+
+      <div id="booking-step-1">
+        <div style="margin-bottom: 24px;">
+          <div class="step-badge">Step 1 of 3</div>
+          <h3 style="font-size: 1.5rem; margin-top: 6px;">What is your primary growth goal?</h3>
+          <p style="color: var(--text-secondary); font-size: 0.88rem;">Select your main objective for your next 30-day sprint.</p>
+        </div>
+
+        <div style="display: grid; gap: 12px; margin-bottom: 28px;">
+          <label style="display: flex; align-items: center; gap: 12px; padding: 14px 18px; background: var(--bg-page); border: 1px solid var(--border-light); border-radius: var(--radius-md); cursor: pointer;">
+            <input type="radio" name="goal" value="Scale Paid Meta & Google Ads" checked style="accent-color: var(--red-primary);">
+            <div>
+              <div style="font-weight: 700; color: var(--text-primary);">Scale Paid Ad Spend & Improve ROAS (₹ INR)</div>
+              <div style="font-size: 0.78rem; color: var(--text-muted);">Meta (Instagram/FB) & Google Ads scaling</div>
+            </div>
+          </label>
+
+          <label style="display: flex; align-items: center; gap: 12px; padding: 14px 18px; background: var(--bg-page); border: 1px solid var(--border-light); border-radius: var(--radius-md); cursor: pointer;">
+            <input type="radio" name="goal" value="Viral Social Media & Reels Growth" style="accent-color: var(--red-primary);">
+            <div>
+              <div style="font-weight: 700; color: var(--text-primary);">Viral Social Media & Instagram Reels Growth</div>
+              <div style="font-size: 0.78rem; color: var(--text-muted);">Short-form video creation, branding & community</div>
+            </div>
+          </label>
+
+          <label style="display: flex; align-items: center; gap: 12px; padding: 14px 18px; background: var(--bg-page); border: 1px solid var(--border-light); border-radius: var(--radius-md); cursor: pointer;">
+            <input type="radio" name="goal" value="Local SEO & Website Conversion" style="accent-color: var(--red-primary);">
+            <div>
+              <div style="font-weight: 700; color: var(--text-primary);">Google #1 Ranking (Local SEO) & Website CRO</div>
+              <div style="font-size: 0.78rem; color: var(--text-muted);">Google Maps dominance, high-speed landing pages</div>
+            </div>
+          </label>
+        </div>
+
+        <button type="button" class="btn btn-primary" id="btn-to-step-2" style="width: 100%;">
+          <span>Continue to Budget & Details →</span>
+        </button>
+      </div>
+
+      <div id="booking-step-2" style="display: none;">
+        <div style="margin-bottom: 24px;">
+          <div class="step-badge">Step 2 of 3</div>
+          <h3 style="font-size: 1.5rem; margin-top: 6px;">Budget & Stage Qualification</h3>
+          <p style="color: var(--text-secondary); font-size: 0.88rem;">Helps us prepare customized benchmarks for your consultation.</p>
+        </div>
+
+        <div style="margin-bottom: 18px;">
+          <label style="font-size: 0.85rem; font-weight: 700; display: block; margin-bottom: 8px;">Monthly Ad Budget in ₹ INR</label>
+          <select id="booking-budget" class="form-select">
+            <option value="₹15,000 - ₹30,000 / month">₹15,000 - ₹30,000 / month</option>
+            <option value="₹30,000 - ₹75,000 / month" selected>₹30,000 - ₹75,000 / month</option>
+            <option value="₹75,000 - ₹2,00,000 / month">₹75,000 - ₹2,00,000 / month</option>
+            <option value="₹2,00,000+ / month (Enterprise)">₹2,00,000+ / month (Enterprise)</option>
+          </select>
+        </div>
+
+        <div style="margin-bottom: 28px;">
+          <label style="font-size: 0.85rem; font-weight: 700; display: block; margin-bottom: 8px;">Website URL / Instagram Handle</label>
+          <input type="text" id="booking-url" class="form-input" placeholder="https://yourbrand.in or @instagram">
+        </div>
+
+        <div style="display: flex; gap: 12px;">
+          <button type="button" class="btn btn-secondary" id="btn-back-to-step-1" style="flex: 1;">Back</button>
+          <button type="button" class="btn btn-primary" id="btn-to-step-3" style="flex: 2;">Continue to Contact Info →</button>
+        </div>
+      </div>
+
+      <div id="booking-step-3" style="display: none;">
+        <div style="margin-bottom: 24px;">
+          <div class="step-badge">Step 3 of 3</div>
+          <h3 style="font-size: 1.5rem; margin-top: 6px;">Where should we send your Growth Audit?</h3>
+          <p style="color: var(--text-secondary); font-size: 0.88rem;">We will prepare your tailored teardown before the session.</p>
+        </div>
+
+        <form id="booking-final-form">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
+            <div class="form-group">
+              <label for="book-name">Full Name *</label>
+              <input type="text" id="book-name" class="form-input" placeholder="e.g. Priya Patel" required>
+            </div>
+            <div class="form-group">
+              <label for="book-email">Email Address *</label>
+              <input type="email" id="book-email" class="form-input" placeholder="priya@brand.in" required>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 24px;">
+            <label for="book-phone">WhatsApp Number (+91) *</label>
+            <input type="tel" id="book-phone" class="form-input" placeholder="+91 81405 02097" required>
+          </div>
+
+          <div style="display: flex; gap: 12px;">
+            <button type="button" class="btn btn-secondary" id="btn-back-to-step-2" style="flex: 1;">Back</button>
+            <button type="submit" class="btn btn-primary" style="flex: 2;">
+              <span>Confirm Strategy Session</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Success State -->
+      <div id="booking-success-state" style="display: none; text-align: center; padding: 20px 10px;">
+        <div style="width: 72px; height: 72px; background: rgba(16, 185, 129, 0.15); border: 2px solid var(--emerald-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px auto; font-size: 2rem; color: var(--emerald-primary);">
+          ✓
+        </div>
+        <h3 style="font-size: 1.6rem; margin-bottom: 12px;">Strategy Session Reserved!</h3>
+        <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 24px; line-height: 1.6;">
+          Our Senior Growth Strategist has received your details and is preparing your customized 30-day growth teardown. We will also message you directly on WhatsApp (+91 81405 02097).
+        </p>
+        <div style="display: flex; gap: 12px; justify-content: center;">
+          <a href="https://wa.me/918140502097?text=Hi%20Connect%20Digital%20Media!%20I%20just%20booked%20a%20strategy%20session%20on%20your%20website." target="_blank" rel="noopener noreferrer" class="btn btn-whatsapp">
+            <span>Open WhatsApp Chat</span>
+          </a>
+          <button type="button" class="btn btn-secondary" id="booking-done-btn">Close Window</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    // Run immediately and on DOM ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', loadSubServicePage);
+    } else {
+      loadSubServicePage();
+    }
+
+    // Listen for hash changes if user navigates via hash links
+    window.addEventListener('hashchange', () => {
+      loadSubServicePage();
+    });
+
+    function getSelectedSlug() {
+      // 1. Check regex on full URL (works on file:// protocol even if search is stripped)
+      const fullUrl = window.location.href;
+      const match = fullUrl.match(/[?&#]sub=([a-zA-Z0-9_-]+)/);
+      if (match && match[1]) {
+        return match[1].toLowerCase();
+      }
+
+      // 2. Check URL search params
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const querySlug = params.get('sub');
+        if (querySlug) return querySlug.toLowerCase();
+      } catch (e) {
+        console.warn('URLSearchParams error:', e);
+      }
+
+      // 3. Check hash: #instagram-marketing
+      if (window.location.hash) {
+        const hashSlug = window.location.hash.replace('#', '').replace('svc-', '').split('?')[0];
+        if (hashSlug && hashSlug.length > 1) {
+          return hashSlug.toLowerCase();
+        }
+      }
+
+      // 4. Default fallback
+      return 'instagram-marketing';
+    }
+
+    function loadSubServicePage() {
+      const slug = getSelectedSlug();
+      if (!window.agencyData || !window.agencyData.getSubService) return;
+
+      const sub = window.agencyData.getSubService(slug) || window.agencyData.getSubService('instagram-marketing');
+      if (!sub) return;
+
+      // Update Page Title
+      document.title = `${sub.name} Services | Connect Digital Media India`;
+
+      // Update Breadcrumbs
+      const bcParent = document.getElementById('bc-parent-cat');
+      const bcCurrent = document.getElementById('bc-current-sub');
+      if (bcParent) bcParent.innerText = sub.parentCategory;
+      if (bcCurrent) bcCurrent.innerText = sub.name;
+
+      // Update Hero
+      document.getElementById('detail-hero-badge').querySelector('#hero-badge-text').innerText = `${sub.parentCategoryNum} • ${sub.parentCategory}`;
+      document.getElementById('detail-title').innerText = sub.name;
+      document.getElementById('detail-tagline').innerText = sub.tagline;
+      document.getElementById('detail-desc').innerText = sub.desc;
+
+      // Update WhatsApp Links
+      const waMsg = encodeURIComponent(`Hi Connect Digital Media! I would like to inquire about your ${sub.name} service under ${sub.parentCategory}.`);
+      const waLink = `https://wa.me/918140502097?text=${waMsg}`;
+      
+      const heroWaBtn = document.getElementById('hero-wa-action-btn');
+      if (heroWaBtn) heroWaBtn.href = waLink;
+      
+      const sidebarWaBtn = document.getElementById('sidebar-wa-btn');
+      if (sidebarWaBtn) sidebarWaBtn.href = waLink;
+
+      // Update Deliverables Box
+      const delivContainer = document.getElementById('detail-deliverables-list');
+      if (delivContainer && sub.deliverables) {
+        delivContainer.innerHTML = sub.deliverables.map(item => `
+          <div class="deliverable-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <span>${item}</span>
+          </div>
+        `).join('');
+      }
+
+      // Update 4-Step Process Grid
+      const processContainer = document.getElementById('detail-process-grid');
+      if (processContainer && sub.process) {
+        processContainer.innerHTML = sub.process.map(p => `
+          <div class="process-step-card">
+            <div class="process-step-num">${p.step}</div>
+            <div class="process-step-name">${p.title}</div>
+            <div class="process-step-detail">${p.detail}</div>
+          </div>
+        `).join('');
+      }
+
+      // Update India Market Impact
+      const impactEl = document.getElementById('detail-impact-text');
+      if (impactEl && sub.impact) {
+        impactEl.innerText = sub.impact;
+      }
+
+      // Update Tools Tag Bar
+      const toolsContainer = document.getElementById('detail-tools-list');
+      if (toolsContainer && sub.tools) {
+        toolsContainer.innerHTML = sub.tools.map(t => `
+          <span class="tool-tag">⚡ ${t}</span>
+        `).join('');
+      }
+
+      // Update Quick Facts Sidebar
+      const sfParent = document.getElementById('sf-parent-cat');
+      const sfMetric = document.getElementById('sf-metric');
+      if (sfParent) sfParent.innerText = sub.parentCategory;
+      if (sfMetric) sfMetric.innerText = sub.metricBenchmark || 'High Growth';
+
+      // Update Related Sub-Services list in Sidebar
+      const relatedContainer = document.getElementById('sidebar-related-list');
+      if (relatedContainer) {
+        const parentCat = window.agencyData.allServices.find(c => c.id === sub.parentCategoryId);
+        if (parentCat) {
+          relatedContainer.innerHTML = parentCat.subServices.map(s => {
+            const isCurrent = s.slug === sub.slug;
+            return `
+              <li>
+                <a href="service-detail.html?sub=${s.slug}" class="related-sub-link ${isCurrent ? 'active' : ''}">
+                  <span>${s.name}</span>
+                  <span>${isCurrent ? '●' : '→'}</span>
+                </a>
+              </li>
+            `;
+          }).join('');
+        }
+      }
+
+      // Populate Quick Switcher Dropdown (Categorized by Pillar)
+      const switcher = document.getElementById('subservice-quick-select');
+      if (switcher && switcher.options.length <= 1) {
+        switcher.innerHTML = window.agencyData.allServices.map(cat => `
+          <optgroup label="${cat.num}. ${cat.title}">
+            ${cat.subServices.map(s => `
+              <option value="${s.slug}" ${s.slug === sub.slug ? 'selected' : ''}>${s.name}</option>
+            `).join('')}
+          </optgroup>
+        `).join('');
+
+        switcher.addEventListener('change', (e) => {
+          window.location.href = `service-detail.html?sub=${e.target.value}`;
+        });
+      } else if (switcher) {
+        switcher.value = sub.slug;
+      }
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  </script>
+</body>
+</html>

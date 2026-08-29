@@ -1,0 +1,19 @@
+{
+  "name": "connect-digital-media",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Connect Digital Media - Premier Digital Marketing Agency Website & Admin Portal",
+  "main": "index.html",
+  "scripts": {
+    "dev": "npx serve .",
+    "start": "npx serve .",
+    "build": "echo 'Static HTML build complete'"
+  },
+  "keywords": [
+    "digital-marketing",
+    "agency",
+    "india"
+  ],
+  "author": "Connect Digital Media <admin@connectdigitalmedia.co.in>",
+  "license": "ISC"
+}
