@@ -1,0 +1,10 @@
+{
+  "name": "connectdigitalmedia",
+  "version": "1.0.0",
+  "description": "Connect Digital Media Website",
+  "main": "index.html",
+  "scripts": {
+    "build": "echo 'No build required'"
+  },
+  "dependencies": {}
+}
