@@ -1,540 +1,764 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Agency Admin Portal | Connect Digital Media</title>
-  <meta name="description" content="Connect Digital Media Official Agency Admin Portal - Inbound Leads CRM, Conversion Pipeline, and Google Sheets Sync.">
-  <link rel="icon" type="image/jpeg" href="assets/logo.jpg">
-  
-  <!-- Admin Styles -->
-  <link rel="stylesheet" href="css/admin.css">
-</head>
-<body>
+/**
+ * ============================================================================
+ * CONNECT DIGITAL MEDIA - ADMIN DASHBOARD LOGIC (CRM, STATS & SETTINGS)
+ * ============================================================================
+ */
 
-  <!-- ========================================================================
-       1. SECURE LOGIN OVERLAY
-       ======================================================================== -->
-  <div class="admin-login-overlay" id="login-overlay">
-    <div class="login-card">
-      <img src="assets/logo.jpg" alt="Connect Digital Media" class="login-logo">
-      <h2 class="login-title">Agency Admin Portal</h2>
-      <p class="login-subtitle">Connect Digital Media • Surat, Gujarat</p>
+(function () {
+  'use strict';
 
-      <form id="admin-login-form">
-        <div class="login-input-group">
-          <label class="login-label" for="login-email">Official Admin Email</label>
-          <input type="email" id="login-email" class="login-input" value="admin@connectdigitalmedia.co.in" required>
-        </div>
+  // Default credentials
+  const DEFAULT_ADMIN = {
+    email: 'admin@connectdigitalmedia.co.in',
+    pin: '2026'
+  };
 
-        <div class="login-input-group">
-          <label class="login-label" for="login-pin">Security PIN (Default: 2026)</label>
-          <input type="password" id="login-pin" class="login-input" placeholder="Enter 4-digit PIN" autofocus required>
-        </div>
+  // Initial Sample Leads for Indian Market
+  const INITIAL_LEADS = [
+    {
+      id: 'lead-101',
+      name: 'Rohan Mehta',
+      brand: 'Aura Ayurveda D2C',
+      phone: '+91 98250 12345',
+      email: 'rohan@auraayurveda.in',
+      budget: '₹75,000 - ₹2,00,000 / month',
+      services: 'Meta Ads (FB & Insta), Viral Reels & Video',
+      message: 'Looking to scale monthly D2C revenue from ₹8 Lakhs to ₹25 Lakhs. High CAC on Meta currently.',
+      status: 'new',
+      date: '2026-08-28 17:42:10',
+      source: 'Main Contact Page Form',
+      notes: 'Interested in UGC Reels + Advantage+ scaling.'
+    },
+    {
+      id: 'lead-102',
+      name: 'Pooja Shah',
+      brand: 'Kalyan Diamonds Surat',
+      phone: '+91 97240 88990',
+      email: 'pooja@kalyandiamonds.com',
+      budget: '₹2,00,000+ / month (Enterprise)',
+      services: 'Google Ads & Search, Local SEO, WhatsApp & CRM',
+      message: 'Need high-intent diamond buyers in Gujarat & Mumbai. Want WhatsApp catalog lead funnel.',
+      status: 'audit',
+      date: '2026-08-28 14:15:30',
+      source: '30-Day Strategy Audit Modal',
+      notes: 'Strategy teardown scheduled for tomorrow 3 PM IST.'
+    },
+    {
+      id: 'lead-103',
+      name: 'Vikram Singhania',
+      brand: 'NextGen Logistics',
+      phone: '+91 88820 44556',
+      email: 'vikram@nextgenlogistics.in',
+      budget: '₹30,000 - ₹75,000 / month',
+      services: 'B2B Lead Generation, LinkedIn Marketing',
+      message: 'Looking for verified supply chain decision-maker leads across Maharashtra and NCR.',
+      status: 'contacted',
+      date: '2026-08-27 19:30:00',
+      source: 'Main Contact Page Form',
+      notes: 'Sent introductory portfolio via WhatsApp.'
+    },
+    {
+      id: 'lead-104',
+      name: 'Ananya Deshmukh',
+      brand: 'UrbanChic Apparel',
+      phone: '+91 91670 33441',
+      email: 'ananya@urbanchic.in',
+      budget: '₹75,000 - ₹2,00,000 / month',
+      services: 'Performance Marketing, E-commerce Websites',
+      message: 'Want to optimize Shopify store speed and scale ROAS to 4x before Diwali season.',
+      status: 'won',
+      date: '2026-08-26 11:20:00',
+      source: 'ROI Calculator Teardown',
+      notes: 'Onboarded on Scale Sprint Tier (₹59,999/mo).'
+    }
+  ];
 
-        <button type="submit" class="login-btn">
-          <span>Authenticate & Access Dashboard →</span>
-        </button>
-      </form>
+  // Storage Keys
+  const STORAGE_KEYS = {
+    AUTH: 'cdm_admin_auth',
+    LEADS: 'cdm_admin_leads',
+    SETTINGS: 'cdm_admin_settings',
+    CUSTOM_PIN: 'cdm_admin_custom_pin'
+  };
 
-      <div style="margin-top: 20px; font-size: 0.75rem; color: var(--text-muted);">
-        🔒 Authorized Agency Personnel Only • 256-bit Encrypted
-      </div>
-    </div>
-  </div>
+  // State
+  let leads = [];
+  let currentFilter = 'all';
+  let searchQuery = '';
 
-  <!-- ========================================================================
-       2. SIDEBAR NAVIGATION
-       ======================================================================== -->
-  <aside class="admin-sidebar">
-    <div class="sidebar-header">
-      <img src="assets/logo.jpg" alt="Connect Digital Media" class="sidebar-logo-img">
-      <div>
-        <div class="sidebar-brand-text">Connect Media</div>
-        <span class="sidebar-badge">ADMIN 2.0</span>
-      </div>
-    </div>
+  // Initialize
+  document.addEventListener('DOMContentLoaded', () => {
+    initAuth();
+    loadLeads();
+    initNavigation();
+    initLeadControls();
+    initSettings();
+    renderDashboard();
+  });
 
-    <nav class="sidebar-nav">
-      <div class="nav-section-title">Core Management</div>
-      <a href="#" class="admin-nav-item active" data-tab="dashboard">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-        <span>Overview</span>
-      </a>
+  /* ==========================================================================
+     1. AUTHENTICATION & PIN GATE
+     ========================================================================== */
+  function initAuth() {
+    const loginOverlay = document.getElementById('login-overlay');
+    const loginForm = document.getElementById('admin-login-form');
+    const logoutBtn = document.getElementById('admin-logout-btn');
+    const authSaved = localStorage.getItem(STORAGE_KEYS.AUTH);
 
-      <a href="#" class="admin-nav-item" data-tab="leads">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 1 1 0 7.75"></path></svg>
-        <span>Inbound Leads CRM</span>
-      </a>
+    if (authSaved === 'true') {
+      if (loginOverlay) loginOverlay.style.display = 'none';
+    } else {
+      if (loginOverlay) loginOverlay.style.display = 'flex';
+    }
 
-      <div class="nav-section-title">Operations</div>
-      <a href="#" class="admin-nav-item" data-tab="services">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
-        <span>Services & Pricing</span>
-      </a>
+    if (loginForm) {
+      loginForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const pin = document.getElementById('login-pin').value.trim();
+        const storedCustomPin = localStorage.getItem(STORAGE_KEYS.CUSTOM_PIN);
+        const validPin = storedCustomPin || DEFAULT_ADMIN.pin;
 
-      <a href="#" class="admin-nav-item" data-tab="webhook">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-        <span>Google Sheets Sync</span>
-      </a>
+        if (pin === validPin) {
+          localStorage.setItem(STORAGE_KEYS.AUTH, 'true');
+          loginOverlay.style.display = 'none';
+          showToast('Welcome, Administrator! Access granted.');
+          renderDashboard();
+        } else {
+          showToast('Invalid Security PIN / Password. Please try again.', true);
+        }
+      });
+    }
 
-      <a href="#" class="admin-nav-item" data-tab="settings">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-        <span>Agency Settings</span>
-      </a>
+    if (logoutBtn) {
+      logoutBtn.addEventListener('click', () => {
+        localStorage.removeItem(STORAGE_KEYS.AUTH);
+        window.location.reload();
+      });
+    }
+  }
 
-      <div class="nav-section-title">Quick Links</div>
-      <a href="index.html" target="_blank" class="admin-nav-item" style="color: #38bdf8;">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-        <span>View Live Website ↗</span>
-      </a>
-    </nav>
+  /* ==========================================================================
+     2. LEADS DATA STORE
+     ========================================================================== */
+  function loadLeads() {
+    const saved = localStorage.getItem(STORAGE_KEYS.LEADS);
+    if (saved) {
+      try {
+        leads = JSON.parse(saved);
+      } catch (e) {
+        leads = INITIAL_LEADS;
+      }
+    } else {
+      leads = INITIAL_LEADS;
+      saveLeads();
+    }
+  }
 
-    <div class="sidebar-footer">
-      <div class="admin-user-info">
-        <div class="admin-avatar">A</div>
-        <div>
-          <div class="admin-user-name">Agency Admin</div>
-          <div class="admin-user-role">Surat, Gujarat</div>
-        </div>
-      </div>
-      <button type="button" class="logout-btn" id="admin-logout-btn" title="Logout">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
-      </button>
-    </div>
-  </aside>
+  function saveLeads() {
+    localStorage.setItem(STORAGE_KEYS.LEADS, JSON.stringify(leads));
+  }
 
-  <!-- ========================================================================
-       3. MAIN DASHBOARD CONTENT AREA
-       ======================================================================== -->
-  <main class="admin-main">
+  /* ==========================================================================
+     3. NAVIGATION & TABS
+     ========================================================================== */
+  function initNavigation() {
+    const navItems = document.querySelectorAll('.admin-nav-item');
+    const tabPanes = document.querySelectorAll('.tab-pane');
+    const pageTitle = document.getElementById('topbar-page-title');
+
+    navItems.forEach(item => {
+      item.addEventListener('click', (e) => {
+        e.preventDefault();
+        const targetTab = item.getAttribute('data-tab');
+
+        navItems.forEach(i => i.classList.remove('active'));
+        item.classList.add('active');
+
+        tabPanes.forEach(pane => {
+          if (pane.id === `tab-${targetTab}`) {
+            pane.classList.add('active');
+          } else {
+            pane.classList.remove('active');
+          }
+        });
+
+        if (pageTitle) {
+          const titles = {
+            'dashboard': 'Executive Overview',
+            'leads': 'Inbound Leads CRM',
+            'services': 'Services & Pricing',
+            'webhook': 'Google Sheets & API Sync',
+            'settings': 'Agency Settings'
+          };
+          pageTitle.innerText = titles[targetTab] || 'Dashboard';
+        }
+
+        renderDashboard();
+      });
+    });
+  }
+
+  /* ==========================================================================
+     4. RENDER DASHBOARD & KPI METRICS
+     ========================================================================== */
+  function renderDashboard() {
+    renderKPIs();
+    renderLeadsTable();
+    renderRecentActivity();
+    checkWebhookStatus();
+  }
+
+  function renderKPIs() {
+    const totalLeadsEl = document.getElementById('kpi-total-leads');
+    const pipelineValEl = document.getElementById('kpi-pipeline-val');
+    const avgRoasEl = document.getElementById('kpi-avg-roas');
+    const activeAuditsEl = document.getElementById('kpi-active-audits');
+
+    if (!totalLeadsEl) return;
+
+    const total = leads.length;
+    const auditsCount = leads.filter(l => l.status === 'audit' || l.status === 'new').length;
     
-    <!-- Top Bar -->
-    <header class="admin-topbar">
-      <div class="topbar-left">
-        <h1 class="page-title" id="topbar-page-title">Executive Overview</h1>
-      </div>
+    // Calculate estimated pipeline
+    let pipelineTotal = 0;
+    leads.forEach(l => {
+      if (l.status !== 'lost') {
+        if (l.budget.includes('2,00,000+')) pipelineTotal += 200000;
+        else if (l.budget.includes('75,000')) pipelineTotal += 100000;
+        else if (l.budget.includes('30,000')) pipelineTotal += 50000;
+        else pipelineTotal += 25000;
+      }
+    });
 
-      <div class="topbar-right">
-        <div class="sync-status-pill" id="topbar-sync-pill">
-          ● Google Sheets Ready
-        </div>
+    totalLeadsEl.innerText = total;
+    pipelineValEl.innerText = '₹' + (pipelineTotal / 100000).toFixed(1) + ' Lakhs';
+    if (avgRoasEl) avgRoasEl.innerText = '4.2x';
+    if (activeAuditsEl) activeAuditsEl.innerText = auditsCount;
+  }
 
-        <button type="button" class="btn-secondary-admin" id="export-leads-csv-btn">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-          <span>Export CSV</span>
-        </button>
+  /* ==========================================================================
+     5. RENDER LEADS TABLE (CRM)
+     ========================================================================== */
+  function renderLeadsTable() {
+    const tbody = document.getElementById('leads-table-body');
+    if (!tbody) return;
 
-        <button type="button" class="btn-primary-admin" id="add-new-lead-btn">
-          <span>+ Add Inbound Lead</span>
-        </button>
-      </div>
-    </header>
+    let filtered = leads.filter(lead => {
+      const matchFilter = (currentFilter === 'all' || lead.status === currentFilter);
+      const query = searchQuery.toLowerCase();
+      const matchSearch = !query || 
+        lead.name.toLowerCase().includes(query) ||
+        lead.brand.toLowerCase().includes(query) ||
+        lead.phone.toLowerCase().includes(query) ||
+        lead.email.toLowerCase().includes(query) ||
+        lead.services.toLowerCase().includes(query);
+      return matchFilter && matchSearch;
+    });
 
-    <div class="admin-content">
+    if (filtered.length === 0) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="7" style="text-align: center; padding: 40px; color: var(--text-muted);">
+            No leads found matching your criteria.
+          </td>
+        </tr>
+      `;
+      return;
+    }
 
-      <!-- ====================================================================
-           TAB 1: EXECUTIVE OVERVIEW DASHBOARD
-           ==================================================================== -->
-      <section class="tab-pane active" id="tab-dashboard">
-        
-        <!-- KPI Cards Grid -->
-        <div class="metrics-grid">
-          <div class="metric-card">
-            <div class="metric-card-top">
-              <span class="metric-label">Total Inbound Leads</span>
-              <div class="metric-icon-box">👥</div>
+    tbody.innerHTML = filtered.map(lead => {
+      const statusMap = {
+        'new': { label: 'New Lead', class: 'status-new' },
+        'contacted': { label: 'Contacted', class: 'status-contacted' },
+        'audit': { label: 'Audit Scheduled', class: 'status-audit' },
+        'won': { label: 'Closed Won 🎉', class: 'status-won' },
+        'lost': { label: 'Lost', class: 'status-lost' }
+      };
+
+      const statusObj = statusMap[lead.status] || statusMap['new'];
+      const rawPhone = lead.phone.replace(/[^0-9]/g, '');
+
+      return `
+        <tr data-id="${lead.id}">
+          <td>
+            <div class="lead-name-cell">
+              <span>${escapeHtml(lead.name)}</span>
+              <span class="lead-brand-sub">${escapeHtml(lead.brand)}</span>
             </div>
-            <div class="metric-val" id="kpi-total-leads">4</div>
-            <div class="metric-sub">▲ +100% this week</div>
-          </div>
-
-          <div class="metric-card">
-            <div class="metric-card-top">
-              <span class="metric-label">Pipeline Value (₹ INR)</span>
-              <div class="metric-icon-box">💰</div>
-            </div>
-            <div class="metric-val" id="kpi-pipeline-val">₹3.7 Lakhs</div>
-            <div class="metric-sub">Across 4 active discussions</div>
-          </div>
-
-          <div class="metric-card">
-            <div class="metric-card-top">
-              <span class="metric-label">Average Target ROAS</span>
-              <div class="metric-icon-box">⚡</div>
-            </div>
-            <div class="metric-val" id="kpi-avg-roas">4.2x</div>
-            <div class="metric-sub">Within 30 days of launch</div>
-          </div>
-
-          <div class="metric-card">
-            <div class="metric-card-top">
-              <span class="metric-label">Strategy Audits Pending</span>
-              <div class="metric-icon-box">🎯</div>
-            </div>
-            <div class="metric-val" id="kpi-active-audits">2</div>
-            <div class="metric-sub" style="color: #38bdf8;">Requires WhatsApp Follow-up</div>
-          </div>
-        </div>
-
-        <!-- Two Column Layout: Quick CRM & Funnel Summary -->
-        <div class="dash-two-col">
-          
-          <!-- Recent Inbound Leads -->
-          <div class="dash-panel">
-            <div class="panel-header">
-              <h3 class="panel-title">🔥 Recent Inbound Growth Leads</h3>
-              <a href="#" class="btn-secondary-admin" onclick="document.querySelector('[data-tab=\'leads\']').click();" style="font-size: 0.78rem; padding: 5px 10px;">
-                View All in CRM →
+          </td>
+          <td>
+            <div style="font-size: 0.85rem;">
+              <a href="https://wa.me/${rawPhone}" target="_blank" style="color: #25D366; text-decoration: none; font-weight: 600;">
+                💬 ${escapeHtml(lead.phone)}
               </a>
+              <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">
+                ${escapeHtml(lead.email)}
+              </div>
             </div>
-
-            <div id="recent-activity-list">
-              <!-- Populated by admin.js -->
-            </div>
-          </div>
-
-          <!-- Quick Action Hub -->
-          <div class="dash-panel" style="background: linear-gradient(180deg, #131b2e 0%, #0d1322 100%);">
-            <div class="panel-header">
-              <h3 class="panel-title">⚡ Quick Agency Controls</h3>
-            </div>
-
-            <div style="display: grid; gap: 12px;">
-              <a href="https://wa.me/918140502097" target="_blank" class="admin-nav-item" style="background: rgba(37, 211, 102, 0.12); color: #25D366; border: 1px solid rgba(37, 211, 102, 0.3);">
-                <span>💬 Open Agency WhatsApp (+91 81405 02097)</span>
-              </a>
-
-              <a href="https://mail.google.com" target="_blank" class="admin-nav-item" style="background: rgba(56, 189, 248, 0.12); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3);">
-                <span>✉️ Check Admin Inbox (admin@...)</span>
-              </a>
-
-              <button type="button" class="admin-nav-item" onclick="document.querySelector('[data-tab=\'webhook\']').click();" style="background: rgba(229, 45, 37, 0.12); color: var(--red-primary); border: 1px solid rgba(229, 45, 37, 0.3); text-align: left; width: 100%;">
-                <span>📊 Test Google Sheets Webhook Sync</span>
-              </button>
-            </div>
-
-            <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--admin-card-border); font-size: 0.8rem; color: var(--text-muted);">
-              <strong>Agency HQ:</strong> Surat - Gujarat, India<br>
-              <strong>Status:</strong> Live & Capturing Leads
-            </div>
-          </div>
-
-        </div>
-      </section>
-
-      <!-- ====================================================================
-           TAB 2: INBOUND LEADS CRM
-           ==================================================================== -->
-      <section class="tab-pane" id="tab-leads">
-        <div class="table-controls">
-          <div class="search-input-box">
-            <span class="search-icon">🔍</span>
-            <input type="text" id="leads-search-input" placeholder="Search by name, brand, phone, email, service...">
-          </div>
-
-          <div class="filter-group">
-            <select class="admin-select" id="leads-status-filter">
-              <option value="all">All Stages</option>
-              <option value="new">🔵 New Leads</option>
-              <option value="contacted">🟡 Contacted</option>
-              <option value="audit">🟣 Audit Scheduled</option>
-              <option value="won">🟢 Closed Won</option>
-              <option value="lost">🔴 Lost</option>
+          </td>
+          <td>
+            <span style="font-size: 0.8rem; color: #38bdf8; font-weight: 600;">
+              ${escapeHtml(lead.services.substring(0, 32))}${lead.services.length > 32 ? '...' : ''}
+            </span>
+          </td>
+          <td>
+            <span style="font-weight: 700; color: #34d399; font-size: 0.82rem;">
+              ${escapeHtml(lead.budget)}
+            </span>
+          </td>
+          <td>
+            <select class="admin-select lead-status-select" data-id="${lead.id}" style="padding: 4px 8px; font-size: 0.75rem;">
+              <option value="new" ${lead.status === 'new' ? 'selected' : ''}>🔵 New Lead</option>
+              <option value="contacted" ${lead.status === 'contacted' ? 'selected' : ''}>🟡 Contacted</option>
+              <option value="audit" ${lead.status === 'audit' ? 'selected' : ''}>🟣 Strategy Audit</option>
+              <option value="won" ${lead.status === 'won' ? 'selected' : ''}>🟢 Closed Won</option>
+              <option value="lost" ${lead.status === 'lost' ? 'selected' : ''}>🔴 Lost</option>
             </select>
-          </div>
-        </div>
-
-        <div class="admin-table-container">
-          <table class="admin-table">
-            <thead>
-              <tr>
-                <th>Lead / Brand</th>
-                <th>Contact Info</th>
-                <th>Service Requested</th>
-                <th>Monthly Budget</th>
-                <th>Stage</th>
-                <th>Date</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody id="leads-table-body">
-              <!-- Populated dynamically by admin.js -->
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <!-- ====================================================================
-           TAB 3: SERVICES & PRICING
-           ==================================================================== -->
-      <section class="tab-pane" id="tab-services">
-        <div class="dash-panel" style="margin-bottom: 24px;">
-          <h3 class="panel-title" style="margin-bottom: 8px;">Active Retainer Pricing Plans (₹ INR)</h3>
-          <p style="color: var(--text-sub); font-size: 0.88rem; margin-bottom: 24px;">Configured pricing tiers shown across the website.</p>
-
-          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
-            <div style="background: rgba(9,13,22,0.6); padding: 22px; border-radius: 12px; border: 1px solid var(--admin-card-border);">
-              <div style="color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase;">Tier 1</div>
-              <h4 style="font-size: 1.3rem; margin: 6px 0;">Starter Growth</h4>
-              <div style="font-size: 1.8rem; font-weight: 800; color: var(--red-primary); margin-bottom: 12px;">₹14,999<span style="font-size: 0.85rem; color: var(--text-muted);"> / mo</span></div>
-              <ul style="font-size: 0.82rem; color: var(--text-sub); line-height: 1.8; list-style: none;">
-                <li>✓ 2 Social Channels (Instagram & FB)</li>
-                <li>✓ 8 Direct-Response Creatives</li>
-                <li>✓ Meta Ads Setup & Daily Optimization</li>
-                <li>✓ Bi-Weekly Performance Report</li>
-              </ul>
-            </div>
-
-            <div style="background: rgba(9,13,22,0.6); padding: 22px; border-radius: 12px; border: 1px solid var(--red-primary); position: relative;">
-              <div style="position: absolute; top: -10px; right: 16px; background: var(--red-primary); color: #ffffff; padding: 2px 8px; border-radius: 10px; font-size: 0.68rem; font-weight: 700;">MOST POPULAR</div>
-              <div style="color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase;">Tier 2</div>
-              <h4 style="font-size: 1.3rem; margin: 6px 0;">Growth Engine</h4>
-              <div style="font-size: 1.8rem; font-weight: 800; color: var(--red-primary); margin-bottom: 12px;">₹29,999<span style="font-size: 0.85rem; color: var(--text-muted);"> / mo</span></div>
-              <ul style="font-size: 0.82rem; color: var(--text-sub); line-height: 1.8; list-style: none;">
-                <li>✓ Full Meta & Google Ads Scaling</li>
-                <li>✓ 16 High-Converting Creatives + 4 Reels</li>
-                <li>✓ WhatsApp Automated Abandoned Cart</li>
-                <li>✓ Weekly Executive Strategy Call</li>
-              </ul>
-            </div>
-
-            <div style="background: rgba(9,13,22,0.6); padding: 22px; border-radius: 12px; border: 1px solid var(--admin-card-border);">
-              <div style="color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase;">Tier 3</div>
-              <h4 style="font-size: 1.3rem; margin: 6px 0;">Scale Sprint</h4>
-              <div style="font-size: 1.8rem; font-weight: 800; color: var(--red-primary); margin-bottom: 12px;">₹59,999<span style="font-size: 0.85rem; color: var(--text-muted);"> / mo</span></div>
-              <ul style="font-size: 0.82rem; color: var(--text-sub); line-height: 1.8; list-style: none;">
-                <li>✓ Omnichannel (Meta, Google, YouTube, SEO)</li>
-                <li>✓ Unlimited Creatives & Viral UGC Reels</li>
-                <li>✓ Dedicated Growth Pod & Senior Media Buyer</li>
-                <li>✓ Real-Time WhatsApp Emergency Ad Support</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        <div class="dash-panel">
-          <h3 class="panel-title" style="margin-bottom: 14px;">12 Active Agency Disciplines</h3>
-          <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; font-size: 0.85rem;">
-            <div style="padding: 12px; background: rgba(255,255,255,0.03); border-radius: 8px;">1. Social Media Marketing</div>
-            <div style="padding: 12px; background: rgba(255,255,255,0.03); border-radius: 8px;">2. Performance Paid Ads</div>
-            <div style="padding: 12px; background: rgba(255,255,255,0.03); border-radius: 8px;">3. SEO & Google Search</div>
-            <div style="padding: 12px; background: rgba(255,255,255,0.03); border-radius: 8px;">4. Content Marketing</div>
-            <div style="padding: 12px; background: rgba(255,255,255,0.03); border-radius: 8px;">5. Website Development</div>
-            <div style="padding: 12px; background: rgba(255,255,255,0.03); border-radius: 8px;">6. WhatsApp & Email CRM</div>
-            <div style="padding: 12px; background: rgba(255,255,255,0.03); border-radius: 8px;">7. Influencer Marketing</div>
-            <div style="padding: 12px; background: rgba(255,255,255,0.03); border-radius: 8px;">8. Video & Reels Marketing</div>
-            <div style="padding: 12px; background: rgba(255,255,255,0.03); border-radius: 8px;">9. Lead Generation B2B</div>
-            <div style="padding: 12px; background: rgba(255,255,255,0.03); border-radius: 8px;">10. E-Commerce Growth</div>
-            <div style="padding: 12px; background: rgba(255,255,255,0.03); border-radius: 8px;">11. Brand Identity & Design</div>
-            <div style="padding: 12px; background: rgba(255,255,255,0.03); border-radius: 8px;">12. Analytics & Attribution</div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ====================================================================
-           TAB 4: GOOGLE SHEETS & API SYNC
-           ==================================================================== -->
-      <section class="tab-pane" id="tab-webhook">
-        <div class="settings-grid">
-          
-          <div class="dash-panel">
-            <h3 class="panel-title" style="margin-bottom: 8px;">Google Apps Script Webhook URL</h3>
-            <p style="color: var(--text-sub); font-size: 0.85rem; margin-bottom: 20px;">
-              Paste your deployed Google Apps Script Web App URL below to sync all leads into your Google Sheet.
-            </p>
-
-            <div class="form-setting-group">
-              <label class="setting-label">Google Web App URL</label>
-              <input type="url" id="setting-webhook-url" class="setting-input" placeholder="https://script.google.com/macros/s/AKfycb.../exec">
-            </div>
-
-            <div style="display: flex; gap: 12px;">
-              <button type="button" class="btn-secondary-admin" id="test-webhook-btn">
-                <span>Send Test Ping</span>
+          </td>
+          <td>
+            <span style="font-size: 0.75rem; color: var(--text-muted);">${lead.date ? lead.date.split(' ')[0] : 'Today'}</span>
+          </td>
+          <td>
+            <div class="action-btn-group">
+              <button type="button" class="tbl-action-btn wa open-wa-quick-btn" data-id="${lead.id}" title="Launch Tailored WhatsApp Follow-up">
+                <span>WhatsApp</span>
               </button>
-              <button type="button" class="btn-primary-admin" id="save-settings-btn">
-                <span>Save Webhook URL</span>
+              <button type="button" class="tbl-action-btn open-lead-details-btn" data-id="${lead.id}" title="View Details & Notes">
+                <span>View</span>
+              </button>
+              <button type="button" class="tbl-action-btn delete-lead-btn" data-id="${lead.id}" style="color: #ef4444;" title="Delete Lead">
+                ✕
               </button>
             </div>
-          </div>
+          </td>
+        </tr>
+      `;
+    }).join('');
 
-          <div class="dash-panel">
-            <h3 class="panel-title" style="margin-bottom: 12px;">Quick Setup Helper</h3>
-            <p style="color: var(--text-sub); font-size: 0.85rem; line-height: 1.6; margin-bottom: 14px;">
-              1. Create a Google Sheet named <strong>Connect Digital Media - Live Leads</strong><br>
-              2. Click <strong>Extensions > Apps Script</strong><br>
-              3. Copy the script from <a href="backend/google-apps-script.js" target="_blank" style="color: #38bdf8;">backend/google-apps-script.js</a><br>
-              4. Click <strong>Deploy > New deployment > Web app</strong> (Access: Anyone)<br>
-              5. Paste your URL on the left and click "Send Test Ping".
-            </p>
-            <div class="code-box">
-              // Incoming Payload Schema<br>
-              { "name": "...", "brand": "...", "phone": "+91...", "email": "...", "budget": "₹...", "services": "..." }
-            </div>
-          </div>
+    attachTableEvents();
+  }
 
+  function attachTableEvents() {
+    // Status changes
+    document.querySelectorAll('.lead-status-select').forEach(sel => {
+      sel.addEventListener('change', (e) => {
+        const id = sel.getAttribute('data-id');
+        const newStatus = e.target.value;
+        const targetLead = leads.find(l => l.id === id);
+        if (targetLead) {
+          targetLead.status = newStatus;
+          saveLeads();
+          renderKPIs();
+          showToast(`Updated ${targetLead.name}'s status to ${newStatus.toUpperCase()}`);
+        }
+      });
+    });
+
+    // WhatsApp Quick Follow-up
+    document.querySelectorAll('.open-wa-quick-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-id');
+        const targetLead = leads.find(l => l.id === id);
+        if (targetLead) openWhatsAppTemplateModal(targetLead);
+      });
+    });
+
+    // View Details Modal
+    document.querySelectorAll('.open-lead-details-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-id');
+        const targetLead = leads.find(l => l.id === id);
+        if (targetLead) openLeadDetailsModal(targetLead);
+      });
+    });
+
+    // Delete Lead
+    document.querySelectorAll('.delete-lead-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-id');
+        if (confirm('Are you sure you want to delete this lead?')) {
+          leads = leads.filter(l => l.id !== id);
+          saveLeads();
+          renderDashboard();
+          showToast('Lead deleted successfully.');
+        }
+      });
+    });
+  }
+
+  /* ==========================================================================
+     6. RECENT ACTIVITY LIST ON DASHBOARD
+     ========================================================================== */
+  function renderRecentActivity() {
+    const list = document.getElementById('recent-activity-list');
+    if (!list) return;
+
+    list.innerHTML = leads.slice(0, 5).map(lead => `
+      <div style="display: flex; align-items: flex-start; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
+        <div style="display: flex; gap: 12px; align-items: center;">
+          <div style="width: 36px; height: 36px; border-radius: 50%; background: rgba(229, 45, 37, 0.15); color: var(--red-primary); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem;">
+            ${lead.name.charAt(0)}
+          </div>
+          <div>
+            <div style="font-weight: 700; font-size: 0.88rem; color: #ffffff;">${escapeHtml(lead.name)} (${escapeHtml(lead.brand)})</div>
+            <div style="font-size: 0.75rem; color: var(--text-muted);">${escapeHtml(lead.services)} • <strong style="color: #34d399;">${escapeHtml(lead.budget)}</strong></div>
+          </div>
         </div>
-      </section>
-
-      <!-- ====================================================================
-           TAB 5: AGENCY SETTINGS
-           ==================================================================== -->
-      <section class="tab-pane" id="tab-settings">
-        <div class="dash-panel" style="max-width: 700px;">
-          <h3 class="panel-title" style="margin-bottom: 8px;">Agency Core Information</h3>
-          <p style="color: var(--text-sub); font-size: 0.88rem; margin-bottom: 24px;">Configured details for Connect Digital Media.</p>
-
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-            <div class="form-setting-group">
-              <label class="setting-label">Agency Name</label>
-              <input type="text" class="setting-input" value="Connect Digital Media" readonly>
-            </div>
-
-            <div class="form-setting-group">
-              <label class="setting-label">Office Headquarters</label>
-              <input type="text" class="setting-input" value="Surat - Gujarat, India" readonly>
-            </div>
-          </div>
-
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-            <div class="form-setting-group">
-              <label class="setting-label">WhatsApp & Phone Number</label>
-              <input type="text" class="setting-input" value="+91 81405 02097" readonly>
-            </div>
-
-            <div class="form-setting-group">
-              <label class="setting-label">Official Inbound Email</label>
-              <input type="email" class="setting-input" value="admin@connectdigitalmedia.co.in" readonly>
-            </div>
-          </div>
-
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-            <div class="form-setting-group">
-              <label class="setting-label">Instagram Handle</label>
-              <input type="text" class="setting-input" value="@connect.digitalmedia" readonly>
-            </div>
-
-            <div class="form-setting-group">
-              <label class="setting-label">Facebook Profile</label>
-              <input type="text" class="setting-input" value="https://www.facebook.com/share/1HX4BHFcEs/" readonly>
-            </div>
-          </div>
+        <div style="text-align: right;">
+          <span class="status-badge status-${lead.status}">${lead.status}</span>
         </div>
-      </section>
+      </div>
+    `).join('');
+  }
 
-    </div>
-  </main>
+  /* ==========================================================================
+     7. SEARCH, FILTERS & EXPORT
+     ========================================================================== */
+  function initLeadControls() {
+    const searchInput = document.getElementById('leads-search-input');
+    const filterSelect = document.getElementById('leads-status-filter');
+    const exportBtn = document.getElementById('export-leads-csv-btn');
+    const addLeadBtn = document.getElementById('add-new-lead-btn');
 
-  <!-- ========================================================================
-       4. WHATSAPP TEMPLATE MODAL
-       ======================================================================== -->
-  <div class="admin-modal-backdrop" id="wa-template-modal">
-    <div class="admin-modal-card">
-      <button type="button" class="admin-modal-close">✕</button>
-      <h3 style="font-size: 1.3rem; margin-bottom: 6px;">Launch WhatsApp Follow-up</h3>
-      <p style="color: var(--text-sub); font-size: 0.85rem; margin-bottom: 20px;">
-        To: <strong id="wa-modal-lead-name" style="color: #ffffff;">Client Name</strong>
-      </p>
+    if (searchInput) {
+      searchInput.addEventListener('input', (e) => {
+        searchQuery = e.target.value;
+        renderLeadsTable();
+      });
+    }
 
-      <div class="form-setting-group">
-        <label class="setting-label">Select Response Template</label>
-        <select id="wa-template-select" class="admin-select" style="width: 100%; padding: 10px;">
-          <option value="audit_intro">1. Strategy Audit Call Invitation (Recommended)</option>
-          <option value="audit_reminder">2. Quick Follow-up / Reminder</option>
-          <option value="pricing_proposal">3. Custom Pricing Proposal Ready</option>
-          <option value="general_touch">4. General Inbound Check-in</option>
-        </select>
+    if (filterSelect) {
+      filterSelect.addEventListener('change', (e) => {
+        currentFilter = e.target.value;
+        renderLeadsTable();
+      });
+    }
+
+    if (exportBtn) {
+      exportBtn.addEventListener('click', exportLeadsToCSV);
+    }
+
+    if (addLeadBtn) {
+      addLeadBtn.addEventListener('click', () => {
+        const modal = document.getElementById('add-lead-modal');
+        if (modal) modal.classList.add('open');
+      });
+    }
+
+    // Add Lead Form
+    const addLeadForm = document.getElementById('manual-add-lead-form');
+    if (addLeadForm) {
+      addLeadForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const newLead = {
+          id: 'lead-' + Date.now(),
+          name: document.getElementById('new-lead-name').value,
+          brand: document.getElementById('new-lead-brand').value,
+          phone: document.getElementById('new-lead-phone').value,
+          email: document.getElementById('new-lead-email').value,
+          budget: document.getElementById('new-lead-budget').value,
+          services: document.getElementById('new-lead-services').value,
+          message: document.getElementById('new-lead-message').value,
+          status: 'new',
+          date: new Date().toISOString().replace('T', ' ').substring(0, 19),
+          source: 'Admin Manual Entry',
+          notes: ''
+        };
+
+        leads.unshift(newLead);
+        saveLeads();
+        renderDashboard();
+        document.getElementById('add-lead-modal').classList.remove('open');
+        addLeadForm.reset();
+        showToast('New lead added to CRM.');
+      });
+    }
+  }
+
+  function exportLeadsToCSV() {
+    if (!leads.length) {
+      showToast('No leads to export.', true);
+      return;
+    }
+
+    const headers = ['ID', 'Date', 'Name', 'Brand', 'Phone', 'Email', 'Budget', 'Services', 'Status', 'Message', 'Notes'];
+    const rows = leads.map(l => [
+      l.id,
+      l.date,
+      `"${l.name.replace(/"/g, '""')}"`,
+      `"${l.brand.replace(/"/g, '""')}"`,
+      `"${l.phone}"`,
+      `"${l.email}"`,
+      `"${l.budget}"`,
+      `"${l.services.replace(/"/g, '""')}"`,
+      l.status,
+      `"${(l.message || '').replace(/"/g, '""')}"`,
+      `"${(l.notes || '').replace(/"/g, '""')}"`
+    ]);
+
+    const csvContent = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `Connect_Digital_Media_Leads_${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
+    showToast('CSV export downloaded successfully!');
+  }
+
+  /* ==========================================================================
+     8. WHATSAPP TEMPLATE MODAL
+     ========================================================================== */
+  function openWhatsAppTemplateModal(lead) {
+    const modal = document.getElementById('wa-template-modal');
+    const title = document.getElementById('wa-modal-lead-name');
+    const msgPreview = document.getElementById('wa-message-preview');
+    const templateSelect = document.getElementById('wa-template-select');
+    const sendBtn = document.getElementById('wa-send-final-btn');
+
+    if (!modal) return;
+
+    title.innerText = `${lead.name} (${lead.brand})`;
+    const rawPhone = lead.phone.replace(/[^0-9]/g, '');
+
+    const templates = {
+      'audit_intro': `Hi ${lead.name}! This is Connect Digital Media (Surat, Gujarat). We received your strategy session request for ${lead.brand}.\n\nWe have reviewed your growth challenge and prepared a custom 30-day scaling teardown for ${lead.services}.\n\nWhen would be a convenient 15-minute window for a quick Zoom/Google Meet call?`,
+      'audit_reminder': `Hi ${lead.name}, following up from Connect Digital Media regarding your marketing audit for ${lead.brand}. Are you free for a quick strategy briefing today?`,
+      'pricing_proposal': `Hi ${lead.name}! Connect Digital Media team here. We have finalized your custom growth proposal (Budget: ${lead.budget}) tailored for ${lead.brand}. Let me know if you would like me to share the PDF here.`,
+      'general_touch': `Hi ${lead.name}! Hope you are having a productive week. Connect Digital Media growth team here—just checking in regarding your digital marketing roadmap for ${lead.brand}.`
+    };
+
+    function updatePreview() {
+      const selectedKey = templateSelect.value;
+      msgPreview.value = templates[selectedKey] || templates['audit_intro'];
+    }
+
+    templateSelect.onchange = updatePreview;
+    updatePreview();
+
+    sendBtn.onclick = () => {
+      const text = encodeURIComponent(msgPreview.value);
+      window.open(`https://wa.me/${rawPhone}?text=${text}`, '_blank');
+      modal.classList.remove('open');
+      showToast(`WhatsApp chat launched with ${lead.name}!`);
+    };
+
+    modal.classList.add('open');
+  }
+
+  /* ==========================================================================
+     9. LEAD DETAILS & NOTES MODAL
+     ========================================================================== */
+  function openLeadDetailsModal(lead) {
+    const modal = document.getElementById('lead-details-modal');
+    const content = document.getElementById('lead-details-content');
+    if (!modal || !content) return;
+
+    content.innerHTML = `
+      <div style="margin-bottom: 20px;">
+        <div style="font-size: 1.4rem; font-weight: 700; color: #ffffff;">${escapeHtml(lead.name)}</div>
+        <div style="color: var(--red-primary); font-weight: 600; font-size: 0.95rem;">${escapeHtml(lead.brand)}</div>
       </div>
 
-      <div class="form-setting-group">
-        <label class="setting-label">Message Preview (Editable)</label>
-        <textarea id="wa-message-preview" class="setting-input" rows="6"></textarea>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px; font-size: 0.85rem;">
+        <div style="background: rgba(9,13,22,0.6); padding: 12px; border-radius: 8px; border: 1px solid var(--admin-card-border);">
+          <div style="color: var(--text-muted); font-size: 0.75rem;">Phone / WhatsApp</div>
+          <div style="font-weight: 700; color: #25D366; margin-top: 2px;">${escapeHtml(lead.phone)}</div>
+        </div>
+        <div style="background: rgba(9,13,22,0.6); padding: 12px; border-radius: 8px; border: 1px solid var(--admin-card-border);">
+          <div style="color: var(--text-muted); font-size: 0.75rem;">Work Email</div>
+          <div style="font-weight: 700; color: #38bdf8; margin-top: 2px;">${escapeHtml(lead.email)}</div>
+        </div>
+        <div style="background: rgba(9,13,22,0.6); padding: 12px; border-radius: 8px; border: 1px solid var(--admin-card-border);">
+          <div style="color: var(--text-muted); font-size: 0.75rem;">Monthly Budget</div>
+          <div style="font-weight: 700; color: #34d399; margin-top: 2px;">${escapeHtml(lead.budget)}</div>
+        </div>
+        <div style="background: rgba(9,13,22,0.6); padding: 12px; border-radius: 8px; border: 1px solid var(--admin-card-border);">
+          <div style="color: var(--text-muted); font-size: 0.75rem;">Form Source</div>
+          <div style="font-weight: 600; color: var(--text-sub); margin-top: 2px;">${escapeHtml(lead.source || 'Website')}</div>
+        </div>
+      </div>
+
+      <div style="margin-bottom: 20px;">
+        <div style="font-size: 0.8rem; font-weight: 700; color: var(--text-sub); margin-bottom: 6px;">Services Requested:</div>
+        <div style="background: rgba(9,13,22,0.6); padding: 12px; border-radius: 8px; font-size: 0.85rem; color: #ffffff;">
+          ${escapeHtml(lead.services)}
+        </div>
+      </div>
+
+      <div style="margin-bottom: 20px;">
+        <div style="font-size: 0.8rem; font-weight: 700; color: var(--text-sub); margin-bottom: 6px;">Client Challenge / Message:</div>
+        <div style="background: rgba(9,13,22,0.6); padding: 12px; border-radius: 8px; font-size: 0.85rem; color: var(--text-sub); font-style: italic;">
+          "${escapeHtml(lead.message || 'No additional note provided.')}"
+        </div>
+      </div>
+
+      <div style="margin-bottom: 20px;">
+        <div style="font-size: 0.8rem; font-weight: 700; color: var(--text-sub); margin-bottom: 6px;">Internal Agency Notes:</div>
+        <textarea id="edit-lead-notes" class="setting-input" rows="3" placeholder="Add private notes on client requirements, calls, proposals...">${escapeHtml(lead.notes || '')}</textarea>
       </div>
 
       <div style="display: flex; justify-content: flex-end; gap: 12px;">
-        <button type="button" class="btn-secondary-admin" onclick="document.getElementById('wa-template-modal').classList.remove('open');">Cancel</button>
-        <button type="button" class="btn-primary-admin" id="wa-send-final-btn" style="background: #25D366; color: #000000;">
-          <span>Open WhatsApp Chat →</span>
-        </button>
+        <button type="button" class="btn-secondary-admin" id="close-details-modal-btn">Close</button>
+        <button type="button" class="btn-primary-admin" id="save-lead-notes-btn">Save Notes</button>
       </div>
-    </div>
-  </div>
+    `;
 
-  <!-- ========================================================================
-       5. LEAD DETAILS & NOTES MODAL
-       ======================================================================== -->
-  <div class="admin-modal-backdrop" id="lead-details-modal">
-    <div class="admin-modal-card">
-      <button type="button" class="admin-modal-close">✕</button>
-      <div id="lead-details-content">
-        <!-- Populated dynamically by admin.js -->
-      </div>
-    </div>
-  </div>
+    document.getElementById('close-details-modal-btn').onclick = () => modal.classList.remove('open');
+    document.getElementById('save-lead-notes-btn').onclick = () => {
+      lead.notes = document.getElementById('edit-lead-notes').value;
+      saveLeads();
+      modal.classList.remove('open');
+      showToast('Lead notes saved successfully!');
+    };
 
-  <!-- ========================================================================
-       6. MANUAL ADD LEAD MODAL
-       ======================================================================== -->
-  <div class="admin-modal-backdrop" id="add-lead-modal">
-    <div class="admin-modal-card">
-      <button type="button" class="admin-modal-close">✕</button>
-      <h3 style="font-size: 1.3rem; margin-bottom: 18px;">Add New Inbound Lead Manually</h3>
+    modal.classList.add('open');
+  }
 
-      <form id="manual-add-lead-form">
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
-          <div class="form-setting-group">
-            <label class="setting-label">Client Name *</label>
-            <input type="text" id="new-lead-name" class="setting-input" placeholder="e.g. Yash Patel" required>
-          </div>
-          <div class="form-setting-group">
-            <label class="setting-label">Brand / Business *</label>
-            <input type="text" id="new-lead-brand" class="setting-input" placeholder="e.g. Surat Silks" required>
-          </div>
-        </div>
+  /* ==========================================================================
+     10. SETTINGS & WEBHOOK TESTER
+     ========================================================================== */
+  function initSettings() {
+    const webhookInput = document.getElementById('setting-webhook-url');
+    const testWebhookBtn = document.getElementById('test-webhook-btn');
+    const saveSettingsBtn = document.getElementById('save-settings-btn');
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
-          <div class="form-setting-group">
-            <label class="setting-label">Phone / WhatsApp *</label>
-            <input type="tel" id="new-lead-phone" class="setting-input" placeholder="+91 98765 43210" required>
-          </div>
-          <div class="form-setting-group">
-            <label class="setting-label">Email Address</label>
-            <input type="email" id="new-lead-email" class="setting-input" placeholder="yash@brand.in">
-          </div>
-        </div>
+    // Load data from agencyData if present
+    if (typeof agencyData !== 'undefined' && agencyData.contact) {
+      if (webhookInput) webhookInput.value = agencyData.contact.googleSheetsWebhookUrl || '';
+    }
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
-          <div class="form-setting-group">
-            <label class="setting-label">Monthly Ad Budget</label>
-            <select id="new-lead-budget" class="admin-select" style="width: 100%; padding: 12px;">
-              <option value="₹15,000 - ₹30,000 / month">₹15,000 - ₹30,000 / month</option>
-              <option value="₹30,000 - ₹75,000 / month" selected>₹30,000 - ₹75,000 / month</option>
-              <option value="₹75,000 - ₹2,00,000 / month">₹75,000 - ₹2,00,000 / month</option>
-              <option value="₹2,00,000+ / month (Enterprise)">₹2,00,000+ / month (Enterprise)</option>
-            </select>
-          </div>
-          <div class="form-setting-group">
-            <label class="setting-label">Services Required</label>
-            <input type="text" id="new-lead-services" class="setting-input" placeholder="e.g. Meta Ads, Reels">
-          </div>
-        </div>
+    if (testWebhookBtn) {
+      testWebhookBtn.addEventListener('click', async () => {
+        const url = webhookInput ? webhookInput.value.trim() : '';
+        if (!url) {
+          showToast('Please enter your Google Apps Script Web App URL first.', true);
+          return;
+        }
 
-        <div class="form-setting-group">
-          <label class="setting-label">Client Notes / Challenge</label>
-          <textarea id="new-lead-message" class="setting-input" rows="2" placeholder="Specific scaling goals..."></textarea>
-        </div>
+        testWebhookBtn.innerText = 'Testing Connection...';
+        try {
+          await fetch(url, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              name: 'Test Inbound Lead',
+              brand: 'Connect Digital Media Test',
+              phone: '+91 81405 02097',
+              email: 'admin@connectdigitalmedia.co.in',
+              services: 'Meta Ads & Google Sheets Sync Test',
+              budget: '₹50,000 / month',
+              message: 'Test ping from Connect Digital Media Admin Dashboard.',
+              formType: 'Admin Diagnostic Ping',
+              pageUrl: window.location.href
+            })
+          });
 
-        <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 10px;">
-          <button type="button" class="btn-secondary-admin" onclick="document.getElementById('add-lead-modal').classList.remove('open');">Cancel</button>
-          <button type="submit" class="btn-primary-admin">Save Lead to CRM</button>
-        </div>
-      </form>
-    </div>
-  </div>
+          showToast('✓ Webhook ping transmitted! Check your Google Sheet & Email.');
+        } catch (err) {
+          showToast('Webhook test failed. Check URL permissions.', true);
+        } finally {
+          testWebhookBtn.innerText = 'Send Test Ping';
+        }
+      });
+    }
 
-  <!-- Scripts -->
-  <script src="js/data.js"></script>
-  <script src="js/admin.js"></script>
-</body>
-</html>
+    if (saveSettingsBtn) {
+      saveSettingsBtn.addEventListener('click', () => {
+        const url = webhookInput.value.trim();
+        if (typeof agencyData !== 'undefined' && agencyData.contact) {
+          agencyData.contact.googleSheetsWebhookUrl = url;
+        }
+        showToast('Settings saved successfully! (Active for current session)');
+        checkWebhookStatus();
+      });
+    }
+
+    // Handle Admin PIN update
+    const updatePinForm = document.getElementById('update-pin-form');
+    if (updatePinForm) {
+      updatePinForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const currentPinInput = document.getElementById('current-pin-input').value.trim();
+        const newPinInput = document.getElementById('new-pin-input').value.trim();
+
+        const storedCustomPin = localStorage.getItem(STORAGE_KEYS.CUSTOM_PIN);
+        const validPin = storedCustomPin || DEFAULT_ADMIN.pin;
+
+        if (currentPinInput !== validPin) {
+          showToast('Current PIN is incorrect.', true);
+          return;
+        }
+
+        if (newPinInput.length < 4) {
+          showToast('New PIN must be at least 4 characters.', true);
+          return;
+        }
+
+        localStorage.setItem(STORAGE_KEYS.CUSTOM_PIN, newPinInput);
+        showToast('✓ Admin PIN successfully updated!');
+        updatePinForm.reset();
+      });
+    }
+
+    // Modal close buttons
+    document.querySelectorAll('.admin-modal-close').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.admin-modal-backdrop').forEach(m => m.classList.remove('open'));
+      });
+    });
+  }
+
+  function checkWebhookStatus() {
+    const pill = document.getElementById('topbar-sync-pill');
+    if (!pill) return;
+
+    let isConfigured = false;
+    if (typeof agencyData !== 'undefined' && agencyData.contact && agencyData.contact.googleSheetsWebhookUrl) {
+      isConfigured = agencyData.contact.googleSheetsWebhookUrl.length > 10;
+    }
+
+    if (isConfigured) {
+      pill.className = 'sync-status-pill';
+      pill.innerHTML = '● Google Sheets Active';
+    } else {
+      pill.className = 'sync-status-pill offline';
+      pill.innerHTML = '○ Webhook Pending';
+    }
+  }
+
+  /* ==========================================================================
+     11. TOAST NOTIFICATION HELPER
+     ========================================================================== */
+  function showToast(message, isError = false) {
+    let toast = document.getElementById('admin-live-toast');
+    if (!toast) {
+      toast = document.createElement('div');
+      toast.id = 'admin-live-toast';
+      toast.className = 'admin-toast';
+      document.body.appendChild(toast);
+    }
+
+    toast.style.borderColor = isError ? '#ef4444' : '#10b981';
+    toast.innerHTML = `
+      <span style="font-size: 1.1rem;">${isError ? '⚠️' : '✓'}</span>
+      <span>${message}</span>
+    `;
+
+    toast.classList.add('show');
+    setTimeout(() => {
+      toast.classList.remove('show');
+    }, 3500);
+  }
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+})();

@@ -1,456 +1,1391 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Contact Us | Connect Digital Media - WhatsApp +91 81405 02097</title>
-  <meta name="description" content="Contact Connect Digital Media. WhatsApp & Phone: +91 81405 02097, Email: admin@connectdigitalmedia.co.in. Book your free 30-min growth strategy audit for your Indian business.">
-  <meta name="keywords" content="contact connect digital media, digital marketing agency contact, marketing agency WhatsApp number India">
-  
-  <!-- Favicon -->
-  <link rel="icon" type="image/jpeg" href="assets/logo.jpg">
-  
-  <!-- Stylesheet -->
-  <link rel="stylesheet" href="css/styles.css">
-</head>
-<body>
+// Connect Digital Media - Main Application Controller
+(function() {
+  function getAgencyData() {
+    return window.agencyData || {};
+  }
 
-  <!-- Ambient Glow -->
-  <div class="ambient-mesh" aria-hidden="true"></div>
-  <div class="grid-overlay" aria-hidden="true"></div>
+  document.addEventListener('DOMContentLoaded', () => {
+    initThemeToggle();
+    initHeader();
+    initHeroSlider();
+    initStats();
+    initServices();
+    initAboutPillars();
+    initRoiCalculator();
+    initCaseStudies();
+    initGrader();
+    initPricing();
+    initBlogs();
+    initTestimonials();
+    initFramework();
+    initFaqs();
+    initOfficeClocks();
+    initBookingModal();
+    initContactForm();
+    initCaseStudyModal();
+    initBlogModal();
+    initSecretAdminShortcut();
+  });
 
-  <!-- Header Navigation -->
-  <header class="site-header" id="site-header">
-    <div class="container header-container">
-      <a href="index.html#hero" class="brand-logo" aria-label="Connect Digital Media">
-        <img src="assets/logo.jpg" alt="Connect Digital Media" class="brand-logo-img">
-      </a>
+  /* ==========================================================================
+     SECRET ADMIN SHORTCUT (Ctrl + Shift + A)
+     ========================================================================== */
+  function initSecretAdminShortcut() {
+    window.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'A' || e.key === 'a')) {
+        e.preventDefault();
+        window.location.href = 'admin.html';
+      }
+    });
+  }
 
-      <nav aria-label="Main Navigation">
-        <ul class="nav-links">
-          <li><a href="index.html" class="nav-link">Home</a></li>
-          <li class="nav-item">
-            <a href="services.html" class="nav-link">
-              <span>Services</span>
-              <span class="dropdown-arrow">▼</span>
-            </a>
+  /* ==========================================================================
+     1. HEADER SCROLL & MOBILE MENU
+     ========================================================================== */
+  function initHeader() {
+    const header = document.getElementById('site-header');
+    const mobileToggle = document.getElementById('mobile-menu-toggle');
+    const navLinks = document.querySelector('.nav-links');
 
-            <!-- Mega Dropdown Menu -->
-            <div class="mega-dropdown-menu">
-              <div class="mega-dropdown-grid">
-                <div>
-                  <div class="mega-col-title">Paid Ads & Funnels</div>
-                  <div class="mega-service-block">
-                    <a href="services.html#svc-performance-marketing" class="mega-service-name">⚡ Performance Marketing</a>
-                    <ul class="mega-sublist">
-                      <li><a href="service-detail.html?sub=google-ads">Google Ads & Search</a></li>
-                      <li><a href="service-detail.html?sub=meta-ads">Meta Ads (FB & Insta)</a></li>
-                      <li><a href="service-detail.html?sub=youtube-ads">YouTube Ads</a></li>
-                      <li><a href="service-detail.html?sub=ecommerce-ads">E-Commerce Ads</a></li>
-                    </ul>
-                  </div>
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 30) {
+        header.classList.add('scrolled');
+      } else {
+        header.classList.remove('scrolled');
+      }
+    });
 
-                  <div class="mega-service-block">
-                    <a href="services.html#svc-lead-generation" class="mega-service-name">🎯 Lead Generation</a>
-                    <ul class="mega-sublist">
-                      <li><a href="service-detail.html?sub=b2b-lead-generation">B2B Lead Generation</a></li>
-                      <li><a href="service-detail.html?sub=whatsapp-lead-generation">WhatsApp Lead Ads</a></li>
-                      <li><a href="service-detail.html?sub=crm-lead-tracking">CRM & Nurturing</a></li>
-                    </ul>
-                  </div>
+    if (mobileToggle && navLinks) {
+      mobileToggle.addEventListener('click', () => {
+        const isExpanded = navLinks.classList.contains('mobile-active');
+        if (isExpanded) {
+          navLinks.classList.remove('mobile-active');
+          navLinks.style.display = 'none';
+        } else {
+          navLinks.classList.add('mobile-active');
+          navLinks.style.display = 'flex';
+          navLinks.style.flexDirection = 'column';
+          navLinks.style.position = 'absolute';
+          navLinks.style.top = '100%';
+          navLinks.style.left = '0';
+          navLinks.style.width = '100%';
+          navLinks.style.background = '#ffffff';
+          navLinks.style.padding = '20px 24px';
+          navLinks.style.borderBottom = '1px solid var(--border-light)';
+          navLinks.style.boxShadow = '0 12px 30px rgba(0,0,0,0.1)';
+          navLinks.style.zIndex = '1000';
+          navLinks.style.gap = '16px';
+        }
+      });
+
+      const links = document.querySelectorAll('.nav-link');
+      links.forEach(link => {
+        link.addEventListener('click', () => {
+          if (window.innerWidth <= 768) {
+            navLinks.classList.remove('mobile-active');
+            navLinks.style.display = 'none';
+          }
+        });
+      });
+    }
+  }
+
+  /* ==========================================================================
+     2. STATS BAR ANIMATION (₹ INR)
+     ========================================================================== */
+  function initStats() {
+    const data = getAgencyData();
+    const container = document.getElementById('stats-container');
+    if (!container || !data.stats) return;
+
+    container.innerHTML = data.stats.map(stat => `
+      <div class="stat-card">
+        <div class="stat-number" data-target="${stat.value}" data-prefix="${stat.prefix}" data-suffix="${stat.suffix}">
+          ${stat.prefix}0${stat.suffix}
+        </div>
+        <div class="stat-label">${stat.label}</div>
+        <div class="stat-subtext">${stat.subtext}</div>
+      </div>
+    `).join('');
+
+    const observer = new IntersectionObserver((entries, obs) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const counters = entry.target.querySelectorAll('.stat-number');
+          counters.forEach(counter => animateCounter(counter));
+          obs.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.25 });
+
+    observer.observe(container);
+  }
+
+  function animateCounter(el) {
+    const target = parseFloat(el.getAttribute('data-target'));
+    const prefix = el.getAttribute('data-prefix') || '';
+    const suffix = el.getAttribute('data-suffix') || '';
+    const isDecimal = target % 1 !== 0;
+    const duration = 1600;
+    const startTime = performance.now();
+
+    function update(currentTime) {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const easeProgress = 1 - Math.pow(1 - progress, 3);
+      const currentVal = target * easeProgress;
+
+      el.innerText = `${prefix}${isDecimal ? currentVal.toFixed(1) : Math.floor(currentVal)}${suffix}`;
+
+      if (progress < 1) {
+        requestAnimationFrame(update);
+      } else {
+        el.innerText = `${prefix}${isDecimal ? target.toFixed(1) : target}${suffix}`;
+      }
+    }
+
+    requestAnimationFrame(update);
+  }
+
+  /* ==========================================================================
+     3. SERVICES RENDERER (12 Full Disciplines with Subpoints)
+     ========================================================================== */
+  function initServices() {
+    const data = getAgencyData();
+    const container = document.getElementById('home-services-accordion-list') || document.getElementById('services-container');
+    if (!container || !data.allServices) return;
+
+    const getServiceSvg = (icon) => {
+      switch (icon) {
+        case 'instagram':
+          return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>`;
+        case 'zap':
+          return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>`;
+        case 'edit':
+          return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>`;
+        case 'search':
+          return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>`;
+        case 'layout':
+          return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>`;
+        case 'video':
+          return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>`;
+        case 'globe':
+          return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>`;
+        case 'target':
+          return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>`;
+        case 'shield':
+          return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>`;
+        case 'users':
+          return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>`;
+        case 'message':
+          return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>`;
+        case 'mail':
+        default:
+          return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>`;
+      }
+    };
+
+    function renderCards(searchQuery = '') {
+      const filtered = data.allServices.filter(s => {
+        if (!searchQuery) return true;
+        const titleMatch = s.title.toLowerCase().includes(searchQuery);
+        const descMatch = s.desc.toLowerCase().includes(searchQuery);
+        const subMatch = s.subServices.some(sub => sub.name.toLowerCase().includes(searchQuery) || sub.desc.toLowerCase().includes(searchQuery));
+        return titleMatch || descMatch || subMatch;
+      });
+
+      container.innerHTML = filtered.map((s, index) => {
+        const isOpenByDefault = searchQuery.length > 0 || index < 2;
+        return `
+          <div class="service-accordion-card ${isOpenByDefault ? 'open' : ''}" id="home-svc-${s.id}">
+            <div class="service-accordion-header" onclick="this.parentElement.classList.toggle('open')">
+              <div class="service-header-left">
+                <div class="service-icon-box" style="margin: 0;">
+                  ${getServiceSvg(s.icon)}
                 </div>
-
-                <div>
-                  <div class="mega-col-title">Social & Influencer</div>
-                  <div class="mega-service-block">
-                    <a href="services.html#svc-social-media-marketing" class="mega-service-name">📱 Social Media (SMM)</a>
-                    <ul class="mega-sublist">
-                      <li><a href="service-detail.html?sub=instagram-marketing">Instagram Marketing</a></li>
-                      <li><a href="service-detail.html?sub=linkedin-marketing">LinkedIn Marketing</a></li>
-                      <li><a href="service-detail.html?sub=community-management">Community Management</a></li>
-                      <li><a href="service-detail.html?sub=social-media-growth">Social Growth Protocols</a></li>
-                    </ul>
-                  </div>
-
-                  <div class="mega-service-block">
-                    <a href="services.html#svc-influencer-marketing" class="mega-service-name">🤝 Influencer Marketing</a>
-                    <ul class="mega-sublist">
-                      <li><a href="service-detail.html?sub=creator-collaborations-ugc">Creator Collaborations (UGC)</a></li>
-                      <li><a href="service-detail.html?sub=influencer-campaigns">Influencer Campaigns</a></li>
-                      <li><a href="service-detail.html?sub=influencer-performance-tracking">Performance Tracking</a></li>
-                    </ul>
-                  </div>
-                </div>
-
-                <div>
-                  <div class="mega-col-title">Creative & Content</div>
-                  <div class="mega-service-block">
-                    <a href="services.html#svc-content-marketing" class="mega-service-name">✍️ Content Marketing</a>
-                    <ul class="mega-sublist">
-                      <li><a href="service-detail.html?sub=content-strategy-planning">Content Strategy</a></li>
-                      <li><a href="service-detail.html?sub=blog-writing">SEO Blog Writing</a></li>
-                      <li><a href="service-detail.html?sub=brand-storytelling">Brand Storytelling</a></li>
-                    </ul>
-                  </div>
-
-                  <div class="mega-service-block">
-                    <a href="services.html#svc-creative-design" class="mega-service-name">🎨 Creative & Design</a>
-                    <ul class="mega-sublist">
-                      <li><a href="service-detail.html?sub=social-media-creatives">Social & Ad Creatives</a></li>
-                      <li><a href="service-detail.html?sub=brand-identity">Brand Identity & Logos</a></li>
-                      <li><a href="service-detail.html?sub=marketing-collaterals">Marketing Collaterals</a></li>
-                    </ul>
-                  </div>
-
-                  <div class="mega-service-block">
-                    <a href="services.html#svc-video-reels-marketing" class="mega-service-name">🎬 Video & Reels</a>
-                    <ul class="mega-sublist">
-                      <li><a href="service-detail.html?sub=instagram-reels">Viral Reels & Shorts</a></li>
-                      <li><a href="service-detail.html?sub=product-videos">Product Videos & Ads</a></li>
-                    </ul>
-                  </div>
-                </div>
-
-                <div>
-                  <div class="mega-col-title">Organic, Tech & CRM</div>
-                  <div class="mega-service-block">
-                    <a href="services.html#svc-seo-search" class="mega-service-name">🔍 SEO & Google Maps</a>
-                    <ul class="mega-sublist">
-                      <li><a href="service-detail.html?sub=local-seo">Local SEO (Indian Metros)</a></li>
-                      <li><a href="service-detail.html?sub=technical-seo">Technical & On-Page SEO</a></li>
-                      <li><a href="service-detail.html?sub=seo-audits">SEO Audits</a></li>
-                    </ul>
-                  </div>
-
-                  <div class="mega-service-block">
-                    <a href="services.html#svc-website-development" class="mega-service-name">💻 Website Development</a>
-                    <ul class="mega-sublist">
-                      <li><a href="service-detail.html?sub=ecommerce-websites">E-commerce & Shopify</a></li>
-                      <li><a href="service-detail.html?sub=landing-pages">Landing Pages & CRO</a></li>
-                    </ul>
-                  </div>
-
-                  <div class="mega-service-block">
-                    <a href="services.html#svc-whatsapp-crm-marketing" class="mega-service-name">💬 WhatsApp & Email CRM</a>
-                    <ul class="mega-sublist">
-                      <li><a href="service-detail.html?sub=whatsapp-marketing">WhatsApp API Broadcasts</a></li>
-                      <li><a href="service-detail.html?sub=email-campaigns">Email Automated Flows</a></li>
-                    </ul>
-                  </div>
+                <div class="service-header-titles">
+                  <h3>${s.num}. ${s.title}</h3>
+                  <p>${s.tagline}</p>
                 </div>
               </div>
-
-              <div class="mega-dropdown-footer">
-                <div>Looking for a custom multi-channel growth plan?</div>
-                <a href="https://wa.me/918140502097?text=Hi%20Connect%20Digital%20Media!%20I%20would%20like%20to%20discuss%20a%20custom%20service%20plan." target="_blank" rel="noopener noreferrer" style="color: var(--wa-green-dark); font-weight: 700; text-decoration: none;">
-                  <span>💬 Chat on WhatsApp (+91 81405 02097) →</span>
-                </a>
+              <div class="service-header-right">
+                <span class="sub-count-badge">${s.subServices.length} Sub-Points</span>
+                <div class="accordion-chevron-btn">▼</div>
               </div>
             </div>
-          </li>
-          <li><a href="about.html" class="nav-link">About Us</a></li>
-          <li><a href="index.html#calculator" class="nav-link">ROI Calculator</a></li>
-          <li><a href="index.html#case-studies" class="nav-link">Case Studies</a></li>
-          <li><a href="index.html#pricing" class="nav-link">Pricing</a></li>
-          <li><a href="index.html#blogs" class="nav-link">Blogs</a></li>
-          <li><a href="contact.html" class="nav-link active" style="color: var(--red-primary);">Contact Us</a></li>
-        </ul>
-      </nav>
 
-      <div class="header-actions">
-        <a href="https://wa.me/918140502097?text=Hi%20Connect%20Digital%20Media!%20I%20want%20to%20get%20in%20touch%20with%20your%20team." target="_blank" rel="noopener noreferrer" class="btn btn-whatsapp btn-sm" id="header-whatsapp-btn">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.301-.15-1.78-.878-2.056-.978-.276-.1-.477-.15-.678.15-.2.301-.778.978-.954 1.18-.176.2-.352.226-.653.075-.301-.15-1.272-.469-2.423-1.496-.897-.8-1.503-1.788-1.68-2.089-.176-.301-.019-.464.132-.614.136-.135.301-.352.452-.528.15-.176.2-.301.301-.502.1-.2.05-.376-.025-.527-.075-.15-.678-1.634-.929-2.238-.244-.588-.493-.509-.678-.518-.176-.009-.376-.011-.577-.011-.2 0-.527.075-.803.376s-1.054 1.03-1.054 2.513c0 1.482 1.08 2.913 1.231 3.114.15.2 2.124 3.243 5.145 4.547.719.311 1.28.497 1.718.636.722.229 1.379.197 1.898.119.579-.087 1.78-.727 2.031-1.43.251-.703.251-1.305.176-1.43-.075-.125-.276-.2-.577-.35zM12.04 2C6.516 2 2.028 6.488 2.028 12.012c0 1.956.566 3.784 1.547 5.334L2 22l4.821-1.523c1.492.89 3.228 1.405 5.219 1.405 5.524 0 10.012-4.488 10.012-10.012S17.564 2 12.04 2z"/></svg>
-          <span>WhatsApp</span>
+            <div class="service-accordion-body">
+              <p class="svc-card-desc">${s.desc}</p>
+              <div class="sub-services-header">👉 Click any subpoint to open its separate full page:</div>
+              <div class="subpoints-grid">
+                ${s.subServices.map(sub => `
+                  <a href="service-detail.html?sub=${sub.slug}" class="subpoint-link-card" style="text-decoration: none; color: inherit;">
+                    <div>
+                      <div class="subpoint-card-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        <span>${sub.name}</span>
+                      </div>
+                      <div class="subpoint-card-desc">${sub.desc}</div>
+                    </div>
+                    <div class="subpoint-footer-bar">
+                      <span class="subpoint-cta-text">Open Page →</span>
+                      <span class="subpoint-wa-icon">💬 WhatsApp</span>
+                    </div>
+                  </a>
+                `).join('')}
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    renderCards();
+
+    // Home search listener
+    const searchInput = document.getElementById('home-service-search');
+    if (searchInput) {
+      searchInput.addEventListener('input', (e) => {
+        renderCards(e.target.value.toLowerCase().trim());
+      });
+    }
+
+    // Home expand/collapse all
+    const toggleAllBtn = document.getElementById('home-toggle-all-btn');
+    if (toggleAllBtn) {
+      let expanded = false;
+      toggleAllBtn.addEventListener('click', () => {
+        expanded = !expanded;
+        toggleAllBtn.innerHTML = expanded ? '<span>Collapse All Subpoints ↑</span>' : '<span>Expand All Subpoints ↓</span>';
+        const cards = container.querySelectorAll('.service-accordion-card');
+        cards.forEach(c => {
+          if (expanded) c.classList.add('open');
+          else c.classList.remove('open');
+        });
+      });
+    }
+  }
+
+  /* ==========================================================================
+     4. ABOUT PILLARS RENDERER
+     ========================================================================== */
+  function initAboutPillars() {
+    const data = getAgencyData();
+    const container = document.getElementById('about-pillars-container');
+    if (!container || !data.about || !data.about.pillars) return;
+
+    const getPillarSvg = (icon) => {
+      switch (icon) {
+        case 'target':
+          return `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>`;
+        case 'zap':
+          return `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>`;
+        case 'india':
+          return `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path><path d="M2 12h20"></path></svg>`;
+        case 'users':
+        default:
+          return `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>`;
+      }
+    };
+
+    container.innerHTML = data.about.pillars.map(p => `
+      <div class="pillar-card">
+        <div class="pillar-icon-box">
+          ${getPillarSvg(p.icon)}
+        </div>
+        <h3 class="pillar-title">${p.title}</h3>
+        <p class="pillar-desc">${p.desc}</p>
+      </div>
+    `).join('');
+  }
+
+  /* ==========================================================================
+     5. INDIAN ROI & REVENUE CALCULATOR (₹ INR)
+     ========================================================================== */
+  function initRoiCalculator() {
+    const spendSlider = document.getElementById('spend-slider');
+    const roasSlider = document.getElementById('roas-slider');
+    const aovSlider = document.getElementById('aov-slider');
+
+    const spendDisplay = document.getElementById('spend-val-display');
+    const roasDisplay = document.getElementById('roas-val-display');
+    const aovDisplay = document.getElementById('aov-val-display');
+
+    const revUpliftEl = document.getElementById('calc-rev-uplift');
+    const optRoasEl = document.getElementById('calc-opt-roas');
+    const annualLiftEl = document.getElementById('calc-annual-lift');
+
+    if (!spendSlider || !roasSlider || !aovSlider) return;
+
+    function formatInr(amount) {
+      if (amount >= 10000000) {
+        return `₹${(amount / 10000000).toFixed(2)} Cr`;
+      } else if (amount >= 100000) {
+        return `₹${(amount / 100000).toFixed(2)} Lakhs`;
+      } else {
+        return `₹${amount.toLocaleString('en-IN')}`;
+      }
+    }
+
+    function calculate() {
+      const spend = parseFloat(spendSlider.value);
+      const currentRoas = parseFloat(roasSlider.value);
+      const aov = parseFloat(aovSlider.value);
+
+      spendDisplay.innerText = `₹${spend.toLocaleString('en-IN')}`;
+      roasDisplay.innerText = `${currentRoas.toFixed(1)}x`;
+      aovDisplay.innerText = `₹${aov.toLocaleString('en-IN')}`;
+
+      const roasMultiplier = currentRoas < 2.5 ? 1.75 : 1.45;
+      const optimizedRoas = Math.min(6.5, currentRoas * roasMultiplier);
+
+      const currentMonthlyRevenue = spend * currentRoas;
+      const projectedMonthlyRevenue = spend * optimizedRoas;
+      const monthlyIncrementalLift = projectedMonthlyRevenue - currentMonthlyRevenue;
+      const annualLift = monthlyIncrementalLift * 12;
+
+      revUpliftEl.innerText = `+${formatInr(Math.round(monthlyIncrementalLift))} / mo`;
+      optRoasEl.innerText = `${optimizedRoas.toFixed(1)}x`;
+      annualLiftEl.innerText = `+${formatInr(Math.round(annualLift))}`;
+    }
+
+    spendSlider.addEventListener('input', calculate);
+    roasSlider.addEventListener('input', calculate);
+    aovSlider.addEventListener('input', calculate);
+
+    calculate();
+  }
+
+  /* ==========================================================================
+     6. CASE STUDIES & CATEGORY FILTER
+     ========================================================================== */
+  function initCaseStudies() {
+    const data = getAgencyData();
+    const container = document.getElementById('cases-grid-container');
+    const filterBtns = document.querySelectorAll('#case-filter-container .filter-tab');
+    if (!container || !data.caseStudies) return;
+
+    function renderCases(category = 'all') {
+      const filtered = category === 'all'
+        ? data.caseStudies
+        : data.caseStudies.filter(c => c.category === category);
+
+      container.innerHTML = filtered.map(c => `
+        <div class="case-card" data-id="${c.id}">
+          <div class="case-header">
+            <div class="case-client-badge">${c.client}</div>
+            <div class="case-location">${c.location}</div>
+          </div>
+
+          <h3 class="case-title">${c.title}</h3>
+          <p class="case-desc">${c.description.substring(0, 140)}...</p>
+
+          <div class="case-metrics-grid">
+            ${c.metrics.map(m => `
+              <div class="metric-cell">
+                <div class="metric-cell-label">${m.label}</div>
+                <div class="metric-cell-val">${m.after}</div>
+                <div class="metric-cell-change">${m.change}</div>
+              </div>
+            `).join('')}
+          </div>
+
+          <div class="case-footer">
+            <div class="case-tags">
+              ${c.tags.slice(0, 3).map(tag => `<span class="case-tag-item">${tag}</span>`).join('')}
+            </div>
+            <span class="case-view-link">
+              <span>Read Strategy</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </span>
+          </div>
+        </div>
+      `).join('');
+
+      const cards = container.querySelectorAll('.case-card');
+      cards.forEach(card => {
+        card.addEventListener('click', () => {
+          const id = card.getAttribute('data-id');
+          openCaseStudyModal(id);
+        });
+      });
+    }
+
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        filterBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const filter = btn.getAttribute('data-filter');
+        renderCases(filter);
+      });
+    });
+
+    renderCases('all');
+  }
+
+  function openCaseStudyModal(id) {
+    const data = getAgencyData();
+    const caseItem = (data.caseStudies || []).find(c => c.id === id);
+    if (!caseItem) return;
+
+    const modal = document.getElementById('case-study-modal');
+    const content = document.getElementById('case-modal-content');
+    if (!modal || !content) return;
+
+    content.innerHTML = `
+      <div style="margin-bottom: 20px;">
+        <div class="badge-pill" style="margin-bottom: 10px;">${caseItem.categoryLabel}</div>
+        <h3 style="font-size: 1.8rem; line-height: 1.3; margin-bottom: 8px;">${caseItem.title}</h3>
+        <div style="font-size: 0.9rem; color: var(--text-muted);">Client: <strong>${caseItem.client}</strong> (${caseItem.location})</div>
+      </div>
+
+      <div class="case-metrics-grid" style="margin-bottom: 24px; padding: 20px;">
+        ${caseItem.metrics.map(m => `
+          <div class="metric-cell">
+            <div class="metric-cell-label">${m.label}</div>
+            <div style="font-size: 0.85rem; color: var(--text-muted); text-decoration: line-through;">${m.before}</div>
+            <div class="metric-cell-val" style="color: var(--red-primary); font-size: 1.3rem;">${m.after}</div>
+            <div class="metric-cell-change">${m.change}</div>
+          </div>
+        `).join('')}
+      </div>
+
+      <h4 style="font-size: 1.2rem; margin-bottom: 10px;">The Challenge & Execution Strategy</h4>
+      <p style="font-size: 0.98rem; color: var(--text-secondary); line-height: 1.7; margin-bottom: 24px;">
+        ${caseItem.description}
+      </p>
+
+      <div class="blog-callout" style="margin-bottom: 28px;">
+        <p style="font-style: italic; font-size: 1rem; margin-bottom: 8px;">${caseItem.quote}</p>
+        <div style="font-weight: 700; font-size: 0.9rem;">— ${caseItem.author}, ${caseItem.authorTitle}</div>
+      </div>
+
+      <div style="display: flex; gap: 14px; justify-content: flex-end;">
+        <a href="https://wa.me/918140502097?text=Hi%20Connect%20Digital%20Media!%20I%20saw%20the%20${encodeURIComponent(caseItem.client)}%20case%20study%20and%20want%20similar%20growth." target="_blank" rel="noopener noreferrer" class="btn btn-whatsapp">
+          <span>Discuss Similar Growth on WhatsApp</span>
         </a>
-        <button type="button" class="btn btn-primary btn-sm open-booking-btn">
-          <span>Book Free Audit</span>
-        </button>
-        <button type="button" class="mobile-menu-btn" id="mobile-menu-toggle" aria-label="Toggle Navigation Menu">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
-        </button>
       </div>
-    </div>
-  </header>
+    `;
 
-  <main>
-    <!-- CONTACT HERO SECTION -->
-    <section class="services-page-hero">
-      <div class="container">
-        <div class="badge-pill hero-badge">
-          <span class="pulse-dot"></span>
-          <span>Fast-Response Channels</span>
+    modal.classList.add('open');
+  }
+
+  function initCaseStudyModal() {
+    const modal = document.getElementById('case-study-modal');
+    const closeBtn = document.getElementById('close-case-modal');
+
+    if (closeBtn && modal) {
+      closeBtn.addEventListener('click', () => modal.classList.remove('open'));
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) modal.classList.remove('open');
+      });
+    }
+  }
+
+  /* ==========================================================================
+     7. INSTANT AI GROWTH GRADER
+     ========================================================================== */
+  function initGrader() {
+    const form = document.getElementById('grader-form');
+    const resultBox = document.getElementById('grader-result-box');
+    const submitBtn = document.getElementById('grader-submit-btn');
+
+    if (!form || !resultBox) return;
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const url = document.getElementById('grader-url').value;
+      const model = document.getElementById('grader-model').value;
+
+      submitBtn.innerHTML = `<span>Analyzing Website...</span>`;
+      submitBtn.disabled = true;
+
+      setTimeout(() => {
+        submitBtn.innerHTML = `<span>Analyze Website</span>`;
+        submitBtn.disabled = false;
+        renderGraderResults(url, model);
+      }, 900);
+    });
+  }
+
+  function renderGraderResults(url, model) {
+    const resultBox = document.getElementById('grader-result-box');
+    const breakdownContainer = document.getElementById('grader-breakdown-container');
+    if (!resultBox || !breakdownContainer) return;
+
+    const categories = [
+      { title: 'Meta & Google Ad Readiness', score: 78, feedback: 'Pixel tracking active; lacks Server-Side CAPI and UGC video hook angles.' },
+      { title: 'Conversion Rate & UX (Mobile)', score: 68, feedback: 'High mobile checkout friction; add 1-click UPI and WhatsApp quick recovery.' },
+      { title: 'SEO & Google Maps Local Rank', score: 74, feedback: 'Solid foundational keywords; missing local city landing pages & GMB reviews.' },
+      { title: 'WhatsApp & Retention Engine', score: 58, feedback: 'No automated abandoned cart flow; 20-30% revenue left on table.' }
+    ];
+
+    breakdownContainer.innerHTML = categories.map(c => `
+      <div class="breakdown-card">
+        <div class="breakdown-top">
+          <span class="breakdown-title">${c.title}</span>
+          <span class="breakdown-score">${c.score}/100</span>
+        </div>
+        <div class="breakdown-bar">
+          <div class="breakdown-fill" style="width: ${c.score}%;"></div>
+        </div>
+        <div class="breakdown-feedback">${c.feedback}</div>
+      </div>
+    `).join('');
+
+    resultBox.style.display = 'block';
+    resultBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  /* ==========================================================================
+     8. PRICING PLANS IN INDIAN RUPEES (₹ INR)
+     ========================================================================== */
+  function initPricing() {
+    const data = getAgencyData();
+    const container = document.getElementById('pricing-container');
+    const monthlyBtn = document.getElementById('plan-toggle-monthly');
+    const quarterlyBtn = document.getElementById('plan-toggle-quarterly');
+    if (!container || !data.pricingPlans) return;
+
+    let billingCycle = 'monthly';
+
+    function renderPlans() {
+      container.innerHTML = data.pricingPlans.map(plan => {
+        const price = billingCycle === 'monthly' ? plan.monthlyPrice : plan.quarterlyPrice;
+        const formattedPrice = `₹${price.toLocaleString('en-IN')}`;
+
+        return `
+          <div class="pricing-card ${plan.featured ? 'featured' : ''}">
+            <div class="pricing-badge">${plan.badge}</div>
+            <h3 class="pricing-name">${plan.name}</h3>
+            <div class="pricing-ad-target">${plan.adSpendTarget}</div>
+
+            <div class="pricing-price-box">
+              <span class="pricing-amount">${formattedPrice}</span>
+              <span class="pricing-period">${plan.period}</span>
+            </div>
+
+            <p class="pricing-desc">${plan.description}</p>
+
+            <ul class="pricing-features">
+              ${plan.features.map(f => `
+                <li>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  <span>${f}</span>
+                </li>
+              `).join('')}
+            </ul>
+
+            <button type="button" class="btn ${plan.featured ? 'btn-primary' : 'btn-secondary'} open-booking-btn" style="width: 100%; margin-top: auto;">
+              <span>${plan.ctaText}</span>
+            </button>
+          </div>
+        `;
+      }).join('');
+
+      const bookingBtns = container.querySelectorAll('.open-booking-btn');
+      bookingBtns.forEach(btn => btn.addEventListener('click', openBookingModal));
+    }
+
+    if (monthlyBtn && quarterlyBtn) {
+      monthlyBtn.addEventListener('click', () => {
+        monthlyBtn.classList.add('active');
+        quarterlyBtn.classList.remove('active');
+        billingCycle = 'monthly';
+        renderPlans();
+      });
+
+      quarterlyBtn.addEventListener('click', () => {
+        quarterlyBtn.classList.add('active');
+        monthlyBtn.classList.remove('active');
+        billingCycle = 'quarterly';
+        renderPlans();
+      });
+    }
+
+    renderPlans();
+  }
+
+  /* ==========================================================================
+     9. BLOGS & ARTICLE READER MODAL
+     ========================================================================== */
+  function initBlogs() {
+    const data = getAgencyData();
+    const container = document.getElementById('blogs-container');
+    if (!container || !data.blogs) return;
+
+    container.innerHTML = data.blogs.map(blog => `
+      <div class="blog-card" data-id="${blog.id}">
+        <div class="blog-meta-top">
+          <span class="blog-category-tag">${blog.category}</span>
+          <span class="blog-read-time">⏱️ ${blog.readTime}</span>
         </div>
 
-        <h1>Let's Engineer Your <span class="text-gradient">Next Growth Phase</span></h1>
+        <h3 class="blog-card-title">${blog.title}</h3>
+        <p class="blog-card-summary">${blog.summary}</p>
+
+        <div class="blog-card-footer">
+          <span class="blog-author">By ${blog.author}</span>
+        </div>
+      </div>
+    `).join('');
+
+    const blogCards = container.querySelectorAll('.blog-card');
+    blogCards.forEach(card => {
+      card.addEventListener('click', () => {
+        const id = card.getAttribute('data-id');
+        openBlogModal(id);
+      });
+    });
+  }
+
+  function openBlogModal(id) {
+    const data = getAgencyData();
+    const blog = (data.blogs || []).find(b => b.id === id);
+    if (!blog) return;
+
+    const modal = document.getElementById('blog-modal');
+    const content = document.getElementById('blog-modal-content');
+    if (!modal || !content) return;
+
+    content.innerHTML = `
+      <div style="margin-bottom: 20px; border-bottom: 1px solid var(--border-light); padding-bottom: 16px;">
+        <div class="blog-category-tag" style="display: inline-block; margin-bottom: 10px;">${blog.category}</div>
+        <h2 style="font-size: 2rem; line-height: 1.25; margin-bottom: 12px;">${blog.title}</h2>
+        <div style="display: flex; gap: 16px; font-size: 0.85rem; color: var(--text-muted);">
+          <span>By <strong>${blog.author}</strong></span>
+          <span>•</span>
+          <span>${blog.date}</span>
+          <span>•</span>
+          <span>${blog.readTime}</span>
+        </div>
+      </div>
+
+      <div class="blog-modal-article">
+        ${blog.content}
+      </div>
+
+      <div style="margin-top: 36px; padding-top: 24px; border-top: 1px solid var(--border-light); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;">
+        <div>
+          <div style="font-weight: 700; font-size: 1rem;">Want us to execute this for your brand?</div>
+          <div style="font-size: 0.85rem; color: var(--text-muted);">Book a free strategy teardown with our agency team.</div>
+        </div>
+        <a href="https://wa.me/918140502097?text=Hi%20Connect%20Digital%20Media!%20I%20read%20your%20article%20on%20${encodeURIComponent(blog.title)}%20and%20want%20to%20apply%20it%20to%20my%20business." target="_blank" rel="noopener noreferrer" class="btn btn-whatsapp">
+          <span>Chat on WhatsApp</span>
+        </a>
+      </div>
+    `;
+
+    modal.classList.add('open');
+  }
+
+  function initBlogModal() {
+    const modal = document.getElementById('blog-modal');
+    const closeBtn = document.getElementById('close-blog-modal');
+
+    if (closeBtn && modal) {
+      closeBtn.addEventListener('click', () => modal.classList.remove('open'));
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) modal.classList.remove('open');
+      });
+    }
+  }
+
+  /* ==========================================================================
+     10. TESTIMONIALS SLIDER
+     ========================================================================= */
+  function initTestimonials() {
+    const data = getAgencyData();
+    const card = document.getElementById('testimonial-card-active');
+    const prevBtn = document.getElementById('test-prev-btn');
+    const nextBtn = document.getElementById('test-next-btn');
+    const indicator = document.getElementById('slider-page-indicator');
+
+    if (!card || !data.testimonials || !data.testimonials.length) return;
+
+    let currentIndex = 0;
+
+    function renderTestimonial(index) {
+      const t = data.testimonials[index];
+      card.innerHTML = `
+        <div class="test-stars">${'★'.repeat(t.stars)}</div>
+        <div class="test-highlight">"${t.highlight}"</div>
+        <div class="test-content">"${t.content}"</div>
+        <div class="test-author-info">
+          <div class="test-avatar">${t.avatar}</div>
+          <div class="test-meta">
+            <div class="test-name">${t.client}</div>
+            <div class="test-role">${t.role}, ${t.company}</div>
+          </div>
+        </div>
+      `;
+
+      if (indicator) {
+        indicator.innerText = `${index + 1} / ${data.testimonials.length}`;
+      }
+    }
+
+    if (prevBtn) {
+      prevBtn.addEventListener('click', () => {
+        currentIndex = (currentIndex - 1 + data.testimonials.length) % data.testimonials.length;
+        renderTestimonial(currentIndex);
+      });
+    }
+
+    if (nextBtn) {
+      nextBtn.addEventListener('click', () => {
+        currentIndex = (currentIndex + 1) % data.testimonials.length;
+        renderTestimonial(currentIndex);
+      });
+    }
+
+    renderTestimonial(0);
+  }
+
+  /* ==========================================================================
+     11. FRAMEWORK 4-STEP PROTOCOL & ANIMATED GROWTH CHART
+     ========================================================================== */
+  function initFramework() {
+    const stageBtns = document.querySelectorAll('.chart-stage-btn');
+    const nodeGroups = document.querySelectorAll('.chart-node-group');
+    const cards = [
+      document.getElementById('protocol-card-0'),
+      document.getElementById('protocol-card-1'),
+      document.getElementById('protocol-card-2'),
+      document.getElementById('protocol-card-3')
+    ];
+
+    const STAGE_DATA = [
+      {
+        revenue: '₹4.5 Lakhs',
+        subRev: 'Initial Baseline Identified',
+        roas: '1.9x Return',
+        subRoas: 'Pre-Optimization Benchmark',
+        cac: '₹620 / order',
+        subCac: 'Uncalibrated Funnel',
+        ltv: '12% Repeat',
+        subLtv: 'Manual Follow-ups',
+        areaPath: 'M 120 195 L 120 195 L 120 220 Z',
+        revPath: 'M 120 195 L 120 195'
+      },
+      {
+        revenue: '₹9.8 Lakhs',
+        subRev: '+117% Early Funnel Uplift',
+        roas: '2.8x Return',
+        subRoas: 'Winning Hooks Validated',
+        cac: '₹440 / order',
+        subCac: '-29% CAC Reduction',
+        ltv: '21% Repeat',
+        subLtv: 'WhatsApp Carts Active',
+        areaPath: 'M 120 195 Q 230 175, 340 155 L 340 220 L 120 220 Z',
+        revPath: 'M 120 195 Q 230 175, 340 155'
+      },
+      {
+        revenue: '₹21.5 Lakhs',
+        subRev: '+377% Omnichannel Scale',
+        roas: '3.9x Return',
+        subRoas: 'Advantage+ Scaling Engine',
+        cac: '₹365 / order',
+        subCac: '-41% Acquisition Cost',
+        ltv: '30% Repeat',
+        subLtv: 'Segmented Broadcasts',
+        areaPath: 'M 120 195 Q 320 160, 560 100 L 560 220 L 120 220 Z',
+        revPath: 'M 120 195 Q 320 160, 560 100'
+      },
+      {
+        revenue: '₹34.8 Lakhs+',
+        subRev: '+673% Compound Peak',
+        roas: '4.7x Return',
+        subRoas: 'Max Efficiency Ceiling',
+        cac: '₹310 / order',
+        subCac: '-50% Blended CAC',
+        ltv: '42.5% Repeat',
+        subLtv: 'Predictive LTV Loops',
+        areaPath: 'M 120 195 L 120 195 Q 320 160, 480 120 T 820 40 L 820 220 L 120 220 Z',
+        revPath: 'M 120 195 Q 320 160, 480 120 T 820 40'
+      }
+    ];
+
+    let currentStage = 0;
+    let autoPlayTimer = null;
+    let userInteracted = false;
+
+    function setStage(index, isManual = false) {
+      if (isManual) userInteracted = true;
+      currentStage = index;
+
+      // Update buttons
+      stageBtns.forEach((btn, i) => {
+        btn.classList.toggle('active', i === index);
+      });
+
+      // Update nodes
+      nodeGroups.forEach((group, i) => {
+        const circle = group.querySelector('.chart-node-circle');
+        const ring = group.querySelector('.chart-pulse-ring');
+        if (circle) circle.classList.toggle('active', i === index);
+        if (ring) ring.style.display = i === index ? 'block' : 'none';
+      });
+
+      // Update KPI metrics
+      const d = STAGE_DATA[index];
+      const valRev = document.getElementById('kpi-val-revenue');
+      const subRev = document.getElementById('kpi-sub-revenue');
+      const valRoas = document.getElementById('kpi-val-roas');
+      const subRoas = document.getElementById('kpi-sub-roas');
+      const valCac = document.getElementById('kpi-val-cac');
+      const subCac = document.getElementById('kpi-sub-cac');
+      const valLtv = document.getElementById('kpi-val-ltv');
+      const subLtv = document.getElementById('kpi-sub-ltv');
+
+      if (valRev) valRev.textContent = d.revenue;
+      if (subRev) subRev.textContent = d.subRev;
+      if (valRoas) valRoas.textContent = d.roas;
+      if (subRoas) subRoas.textContent = d.subRoas;
+      if (valCac) valCac.textContent = d.cac;
+      if (subCac) subCac.textContent = d.subCac;
+      if (valLtv) valLtv.textContent = d.ltv;
+      if (subLtv) subLtv.textContent = d.subLtv;
+
+      // Highlight corresponding protocol card
+      cards.forEach((c, i) => {
+        if (c) {
+          if (i === index) {
+            c.style.borderColor = 'var(--red-primary)';
+            c.style.boxShadow = '0 10px 30px rgba(239, 68, 68, 0.15)';
+            c.style.transform = 'translateY(-6px)';
+          } else {
+            c.style.borderColor = 'var(--border-light)';
+            c.style.boxShadow = 'none';
+            c.style.transform = 'none';
+          }
+        }
+      });
+    }
+
+    // Attach listeners to stage buttons
+    stageBtns.forEach((btn, idx) => {
+      btn.addEventListener('click', () => setStage(idx, true));
+    });
+
+    // Attach listeners to SVG nodes
+    nodeGroups.forEach((group, idx) => {
+      group.addEventListener('click', () => setStage(idx, true));
+    });
+
+    // Start subtle auto rotation if user has not manually clicked
+    autoPlayTimer = setInterval(() => {
+      if (!userInteracted) {
+        const next = (currentStage + 1) % 4;
+        setStage(next, false);
+      }
+    }, 4500);
+
+    // Initial setup
+    setStage(0);
+  }
+
+  /* ==========================================================================
+     12. FAQS ACCORDION
+     ========================================================================== */
+  function initFaqs() {
+    const data = getAgencyData();
+    const container = document.getElementById('faqs-container');
+    if (!container) return;
+
+    const faqs = data.faqs && data.faqs.length ? data.faqs : [
+      {
+        question: '1. What digital marketing services do you offer?',
+        answer: 'We provide complete digital marketing solutions including SEO, Social Media Marketing, Google Ads, Meta Ads, Content Marketing, Website Development, Branding, and Lead Generation—tailored to your business goals.'
+      },
+      {
+        question: '2. How can digital marketing help my business grow?',
+        answer: 'Digital marketing helps your business reach the right audience, build brand awareness, generate qualified leads, increase website traffic, and ultimately drive more sales through measurable online strategies.'
+      },
+      {
+        question: '3. How much does digital marketing cost?',
+        answer: 'Our pricing depends on your business goals, required services, target audience, and marketing budget. We create customized packages rather than using a one-size-fits-all approach.'
+      },
+      {
+        question: '4. How long does it take to see results?',
+        answer: 'Results depend on the strategy and platform. Paid advertising can generate leads relatively quickly, while SEO and organic marketing typically require consistent effort over several months to build sustainable results.'
+      },
+      {
+        question: '5. Do you work with small businesses and startups?',
+        answer: 'Yes. We work with startups, small businesses, growing brands, and established companies, creating strategies according to their current stage, goals, and budget.'
+      },
+      {
+        question: '6. How do you measure the success of a digital marketing campaign?',
+        answer: 'We track key performance indicators such as website traffic, leads, engagement, conversion rate, cost per lead, return on ad spend (ROAS), and sales to understand what is working and continuously improve the campaign.'
+      },
+      {
+        question: '7. Why should I choose your digital marketing agency?',
+        answer: 'We focus on strategy, creativity, data, and measurable results. Instead of simply running campaigns, we understand your business, identify opportunities, and build marketing strategies designed to generate meaningful growth.'
+      }
+    ];
+
+    container.innerHTML = faqs.map((faq, idx) => `
+      <div class="faq-item">
+        <button type="button" class="faq-question-btn" aria-expanded="false">
+          <span>${faq.question}</span>
+          <span class="faq-toggle-icon">+</span>
+        </button>
+        <div class="faq-answer-box">
+          ${faq.answer}
+        </div>
+      </div>
+    `).join('');
+
+    const faqItems = container.querySelectorAll('.faq-item');
+    faqItems.forEach(item => {
+      const btn = item.querySelector('.faq-question-btn');
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const isActive = item.classList.contains('active');
         
-        <p>
-          Whether you want to scale ad spend, launch viral social funnels, or dominate search in India—our team connects directly with you within 2 business hours.
-        </p>
-      </div>
-    </section>
+        // Close other items
+        faqItems.forEach(other => {
+          if (other !== item) {
+            other.classList.remove('active');
+            const otherBtn = other.querySelector('.faq-question-btn');
+            if (otherBtn) otherBtn.setAttribute('aria-expanded', 'false');
+          }
+        });
 
-    <!-- CONTACT MAIN GRID -->
-    <section style="padding: 0 0 90px 0;">
-      <div class="container">
-        <div class="contact-grid">
-          
-          <!-- LEFT: FORM -->
-          <div class="contact-form-card">
-            <h3 class="contact-card-title">Book a 30-Min Strategy Audit</h3>
-            <p class="contact-card-subtitle">
-              Fill in your brand details below to receive a custom 30-day growth teardown for your business.
-            </p>
+        // Toggle clicked item
+        if (isActive) {
+          item.classList.remove('active');
+          btn.setAttribute('aria-expanded', 'false');
+        } else {
+          item.classList.add('active');
+          btn.setAttribute('aria-expanded', 'true');
+        }
+      });
+    });
+  }
 
-            <form id="contact-main-form">
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-                <div class="form-group">
-                  <label for="contact-name">Your Full Name *</label>
-                  <input type="text" id="contact-name" class="form-input" placeholder="e.g. Rushikesh Patil" required>
-                </div>
+  /* ==========================================================================
+     13. OFFICE HUBS & LIVE IST TIME
+     ========================================================================== */
+  function initOfficeClocks() {
+    const data = getAgencyData();
+    const container = document.getElementById('office-clocks-container');
+    if (!container) return;
 
-                <div class="form-group">
-                  <label for="contact-brand">Brand / Business Name *</label>
-                  <input type="text" id="contact-brand" class="form-input" placeholder="e.g. MyBrand India" required>
-                </div>
-              </div>
+    const offices = data.offices && data.offices.length ? data.offices : [
+      { city: 'Surat, Gujarat (HQ)' }
+    ];
 
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-                <div class="form-group">
-                  <label for="contact-email">Work Email *</label>
-                  <input type="email" id="contact-email" class="form-input" placeholder="admin@mybrand.in" required>
-                </div>
+    function updateClocks() {
+      const now = new Date();
+      const istTimeStr = now.toLocaleTimeString('en-US', {
+        timeZone: 'Asia/Kolkata',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: true
+      });
 
-                <div class="form-group">
-                  <label for="contact-phone">WhatsApp / Phone Number (+91) *</label>
-                  <input type="tel" id="contact-phone" class="form-input" placeholder="+91 81405 02097" required>
-                </div>
-              </div>
-
-              <div class="form-group">
-                <label>Services You Are Looking For:</label>
-                <div class="service-checkboxes-grid">
-                  <label class="custom-checkbox">
-                    <input type="checkbox" name="services" value="Social Media Marketing" checked>
-                    <span>Social Media Marketing</span>
-                  </label>
-                  <label class="custom-checkbox">
-                    <input type="checkbox" name="services" value="Performance Ads (Meta & Google)" checked>
-                    <span>Performance Ads</span>
-                  </label>
-                  <label class="custom-checkbox">
-                    <input type="checkbox" name="services" value="Viral Reels & Video">
-                    <span>Reels & Video</span>
-                  </label>
-                  <label class="custom-checkbox">
-                    <input type="checkbox" name="services" value="Local SEO & Website">
-                    <span>SEO & Website</span>
-                  </label>
-                  <label class="custom-checkbox">
-                    <input type="checkbox" name="services" value="WhatsApp & CRM">
-                    <span>WhatsApp Commerce</span>
-                  </label>
-                  <label class="custom-checkbox">
-                    <input type="checkbox" name="services" value="Branding & Creative Design">
-                    <span>Branding & Design</span>
-                  </label>
-                </div>
-              </div>
-
-              <div class="form-group">
-                <label for="contact-budget">Estimated Monthly Marketing Budget (₹ INR):</label>
-                <select id="contact-budget" class="form-select">
-                  <option value="₹15,000 - ₹30,000 / month">₹15,000 - ₹30,000 / month (Starter)</option>
-                  <option value="₹30,000 - ₹75,000 / month" selected>₹30,000 - ₹75,000 / month (Growth Engine)</option>
-                  <option value="₹75,000 - ₹2,00,000 / month">₹75,000 - ₹2,00,000 / month (Scale Sprint)</option>
-                  <option value="₹2,00,000+ / month (Enterprise)">₹2,00,000+ / month (Market Dominance)</option>
-                </select>
-              </div>
-
-              <div class="form-group">
-                <label for="contact-message">What is your #1 growth challenge right now?</label>
-                <textarea id="contact-message" class="form-textarea" rows="3" placeholder="Tell us about your current CAC, target ROAS, or upcoming campaign plans..."></textarea>
-              </div>
-
-              <button type="submit" class="btn btn-primary btn-lg" style="width: 100%;">
-                <span>Submit Strategy Request & Open WhatsApp →</span>
-              </button>
-            </form>
-          </div>
-
-          <!-- RIGHT: DIRECT CHANNELS & SOCIAL -->
-          <div class="contact-info-panel">
-            <div>
-              <div class="badge-pill" style="background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.2); color: #ffffff; margin-bottom: 16px;">
-                <span>Official Contact Details</span>
-              </div>
-              <h3 class="contact-info-title">Talk to Our Growth Leads Directly</h3>
-              <p class="contact-info-desc">
-                We respect your time. Connect directly via WhatsApp or Phone for instantaneous answers.
-              </p>
-
-              <div class="contact-channels-list">
-                <a href="https://wa.me/918140502097?text=Hi%20Connect%20Digital%20Media!%20I%20would%20like%20to%20discuss%20growing%20my%20business." target="_blank" rel="noopener noreferrer" class="contact-channel-item">
-                  <div class="contact-channel-icon wa">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.301-.15-1.78-.878-2.056-.978-.276-.1-.477-.15-.678.15-.2.301-.778.978-.954 1.18-.176.2-.352.226-.653.075-.301-.15-1.272-.469-2.423-1.496-.897-.8-1.503-1.788-1.68-2.089-.176-.301-.019-.464.132-.614.136-.135.301-.352.452-.528.15-.176.2-.301.301-.502.1-.2.05-.376-.025-.527-.075-.15-.678-1.634-.929-2.238-.244-.588-.493-.509-.678-.518-.176-.009-.376-.011-.577-.011-.2 0-.527.075-.803.376s-1.054 1.03-1.054 2.513c0 1.482 1.08 2.913 1.231 3.114.15.2 2.124 3.243 5.145 4.547.719.311 1.28.497 1.718.636.722.229 1.379.197 1.898.119.579-.087 1.78-.727 2.031-1.43.251-.703.251-1.305.176-1.43-.075-.125-.276-.2-.577-.35zM12.04 2C6.516 2 2.028 6.488 2.028 12.012c0 1.956.566 3.784 1.547 5.334L2 22l4.821-1.523c1.492.89 3.228 1.405 5.219 1.405 5.524 0 10.012-4.488 10.012-10.012S17.564 2 12.04 2z"/></svg>
-                  </div>
-                  <div>
-                    <div class="contact-channel-title">WhatsApp Direct Chat</div>
-                    <div class="contact-channel-val">+91 81405 02097</div>
-                  </div>
-                </a>
-
-                <a href="tel:+918140502097" class="contact-channel-item">
-                  <div class="contact-channel-icon">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
-                  </div>
-                  <div>
-                    <div class="contact-channel-title">Phone Inquiries (IST)</div>
-                    <div class="contact-channel-val">+91 81405 02097</div>
-                  </div>
-                </a>
-
-                <a href="mailto:admin@connectdigitalmedia.co.in" class="contact-channel-item">
-                  <div class="contact-channel-icon">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
-                  </div>
-                  <div>
-                    <div class="contact-channel-title">Official Agency Email</div>
-                    <div class="contact-channel-val">admin@connectdigitalmedia.co.in</div>
-                  </div>
-                </a>
-
-                <a href="https://www.instagram.com/connect.digitalmedia" target="_blank" rel="noopener noreferrer" class="contact-channel-item">
-                  <div class="contact-channel-icon" style="background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); color: #ffffff;">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
-                  </div>
-                  <div>
-                    <div class="contact-channel-title">Instagram (@connect.digitalmedia)</div>
-                    <div class="contact-channel-val">Follow our latest growth cases</div>
-                  </div>
-                </a>
-
-                <a href="https://www.facebook.com/share/1HX4BHFcEs/" target="_blank" rel="noopener noreferrer" class="contact-channel-item">
-                  <div class="contact-channel-icon" style="background: #1877f2; color: #ffffff;">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-                  </div>
-                  <div>
-                    <div class="contact-channel-title">Facebook</div>
-                    <div class="contact-channel-val">Join our business community</div>
-                  </div>
-                </a>
-
-                <div class="contact-channel-item" style="cursor: default;">
-                  <div class="contact-channel-icon" style="background: var(--red-primary); color: #ffffff;">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-                  </div>
-                  <div>
-                    <div class="contact-channel-title">Office Headquarters</div>
-                    <div class="contact-channel-val">Surat - Gujarat, India</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; font-size: 0.82rem; color: #94a3b8;">
-              <strong style="color: #ffffff;">Operating Hours:</strong> Monday – Saturday: 9:30 AM – 7:30 PM IST<br>
-              <span style="color: var(--emerald-primary);">● WhatsApp Emergency Ad Support: 24/7 Available</span>
-            </div>
-          </div>
-
+      container.innerHTML = offices.map(o => `
+        <div class="clock-item">
+          <span class="clock-city">📍 ${o.city}</span>
+          <span class="clock-time">${istTimeStr} IST</span>
         </div>
-      </div>
-    </section>
-  </main>
+      `).join('');
+    }
 
-  <!-- FOOTER -->
-  <footer class="site-footer">
-    <div class="container">
-      <div class="footer-top-grid">
-        <!-- Brand Col -->
-        <div class="footer-brand">
-          <a href="index.html#hero" class="brand-logo" aria-label="Connect Digital Media">
-            <img src="assets/logo.jpg" alt="Connect Digital Media" class="brand-logo-img" style="height: 48px;">
-          </a>
-          <p>
-            Connect Digital Media is a premier digital marketing agency in India. We transform online presence into scalable, predictable revenue for ambitious startups and businesses.
-          </p>
+    updateClocks();
+    setInterval(updateClocks, 1000);
+  }
 
-          <!-- Social Handles -->
-          <div class="footer-social-box">
-            <div class="footer-social-title">Connect on Social</div>
-            <div class="footer-social-list">
-              <a href="https://www.instagram.com/connect.digitalmedia" target="_blank" rel="noopener noreferrer" class="social-pill-link instagram" title="Follow Connect Digital Media on Instagram">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
-                <span>@connect.digitalmedia</span>
-              </a>
-              <a href="https://www.facebook.com/share/1HX4BHFcEs/" target="_blank" rel="noopener noreferrer" class="social-pill-link facebook" title="Connect with Connect Digital Media on Facebook">
-                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-                <span>Facebook</span>
-              </a>
-            </div>
-          </div>
+  /* ==========================================================================
+     14. CONSULTATION BOOKING MODAL
+     ========================================================================== */
+  function openBookingModal() {
+    const modal = document.getElementById('booking-modal');
+    if (modal) modal.classList.add('open');
+  }
 
-          <div style="margin-top: 16px; font-size: 0.82rem; color: #94a3b8;">
-            📍 Office: Surat - Gujarat • Registered in India • GST Invoices Available • 100% Data-Driven
-          </div>
-        </div>
+  function initBookingModal() {
+    const modal = document.getElementById('booking-modal');
+    const closeBtn = document.getElementById('close-booking-modal');
+    const doneBtn = document.getElementById('booking-done-btn');
+    const triggerBtns = document.querySelectorAll('.open-booking-btn');
 
-        <!-- Capabilities Links -->
-        <div class="footer-col">
-          <h4>Our Capabilities</h4>
-          <ul class="footer-links">
-            <li><a href="services.html#svc-social-media-marketing">Social Media Marketing</a></li>
-            <li><a href="services.html#svc-performance-marketing">Performance Paid Ads</a></li>
-            <li><a href="services.html#svc-content-marketing">Content Marketing & Copy</a></li>
-            <li><a href="services.html#svc-seo-search">Search Engine Optimization</a></li>
-            <li><a href="services.html#svc-website-development">High-Converting Websites</a></li>
-            <li><a href="services.html#svc-whatsapp-crm-marketing">WhatsApp & Email CRM</a></li>
-            <li><a href="services.html" style="color: var(--red-bright); font-weight: 700;">+ View All 12 Services →</a></li>
-          </ul>
-        </div>
+    const step1 = document.getElementById('booking-step-1');
+    const step2 = document.getElementById('booking-step-2');
+    const step3 = document.getElementById('booking-step-3');
+    const successState = document.getElementById('booking-success-state');
 
-        <!-- Resources & Proof -->
-        <div class="footer-col">
-          <h4>Resources & Proof</h4>
-          <ul class="footer-links">
-            <li><a href="index.html#calculator">Indian ROI Calculator (₹)</a></li>
-            <li><a href="index.html#grader">Website Growth Grader</a></li>
-            <li><a href="index.html#case-studies">Indian Case Studies</a></li>
-            <li><a href="index.html#pricing">Pricing Plans (₹ INR)</a></li>
-            <li><a href="index.html#blogs">Marketing Blog Playbooks</a></li>
-            <li><a href="about.html">About Connect Digital Media</a></li>
-          </ul>
-        </div>
+    const dot1 = document.getElementById('dot-step-1');
+    const dot2 = document.getElementById('dot-step-2');
+    const dot3 = document.getElementById('dot-step-3');
 
-        <!-- Office Hubs & Clocks in India -->
-        <div class="footer-col">
-          <h4>Office Hubs in India</h4>
-          <div class="office-clocks-grid" id="office-clocks-container">
-            <!-- Populated dynamically by app.js -->
-          </div>
-        </div>
-      </div>
+    const btnToStep2 = document.getElementById('btn-to-step-2');
+    const btnBackToStep1 = document.getElementById('btn-back-to-step-1');
+    const btnToStep3 = document.getElementById('btn-to-step-3');
+    const btnBackToStep2 = document.getElementById('btn-back-to-step-2');
+    const finalForm = document.getElementById('booking-final-form');
 
-      <div class="footer-bottom">
-        <div>© 2026 Connect Digital Media. Contact: <strong>admin@connectdigitalmedia.co.in</strong> | <strong>+91 81405 02097</strong></div>
-        <div style="display: flex; gap: 20px;">
-          <a href="contact.html" style="color: #94a3b8; text-decoration: none;">Contact Support</a>
-          <a href="#" style="color: #94a3b8; text-decoration: none;">Privacy Policy</a>
-          <a href="#" style="color: #94a3b8; text-decoration: none;">GST Compliant</a>
-          <a href="admin.html" target="_blank" style="color: #f87171; text-decoration: none; font-weight: 600;">Admin Portal 🔒</a>
-        </div>
-      </div>
-    </div>
-  </footer>
+    triggerBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (modal) modal.classList.add('open');
+      });
+    });
 
-  <!-- FLOATING WHATSAPP BUTTON -->
-  <a href="https://wa.me/918140502097?text=Hi%20Connect%20Digital%20Media!%20I%20would%20like%20to%20discuss%20digital%20marketing%20services%20for%20my%20business." target="_blank" rel="noopener noreferrer" class="floating-wa-btn" id="floating-whatsapp-widget" aria-label="Chat on WhatsApp">
-    <span class="wa-tooltip">💬 Chat on WhatsApp with Growth Lead!</span>
-    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.301-.15-1.78-.878-2.056-.978-.276-.1-.477-.15-.678.15-.2.301-.778.978-.954 1.18-.176.2-.352.226-.653.075-.301-.15-1.272-.469-2.423-1.496-.897-.8-1.503-1.788-1.68-2.089-.176-.301-.019-.464.132-.614.136-.135.301-.352.452-.528.15-.176.2-.301.301-.502.1-.2.05-.376-.025-.527-.075-.15-.678-1.634-.929-2.238-.244-.588-.493-.509-.678-.518-.176-.009-.376-.011-.577-.011-.2 0-.527.075-.803.376s-1.054 1.03-1.054 2.513c0 1.482 1.08 2.913 1.231 3.114.15.2 2.124 3.243 5.145 4.547.719.311 1.28.497 1.718.636.722.229 1.379.197 1.898.119.579-.087 1.78-.727 2.031-1.43.251-.703.251-1.305.176-1.43-.075-.125-.276-.2-.577-.35zM12.04 2C6.516 2 2.028 6.488 2.028 12.012c0 1.956.566 3.784 1.547 5.334L2 22l4.821-1.523c1.492.89 3.228 1.405 5.219 1.405 5.524 0 10.012-4.488 10.012-10.012S17.564 2 12.04 2z"/></svg>
-  </a>
+    if (closeBtn && modal) {
+      closeBtn.addEventListener('click', () => modal.classList.remove('open'));
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) modal.classList.remove('open');
+      });
+    }
 
-  <!-- Scripts -->
-  <script src="js/data.js"></script>
-  <script src="js/app.js"></script>
-</body>
-</html>
+    if (doneBtn && modal) {
+      doneBtn.addEventListener('click', () => modal.classList.remove('open'));
+    }
+
+    if (btnToStep2) {
+      btnToStep2.addEventListener('click', () => {
+        step1.style.display = 'none';
+        step2.style.display = 'block';
+        dot1.classList.remove('active');
+        dot2.classList.add('active');
+      });
+    }
+
+    if (btnBackToStep1) {
+      btnBackToStep1.addEventListener('click', () => {
+        step2.style.display = 'none';
+        step1.style.display = 'block';
+        dot2.classList.remove('active');
+        dot1.classList.add('active');
+      });
+    }
+
+    if (btnToStep3) {
+      btnToStep3.addEventListener('click', () => {
+        step2.style.display = 'none';
+        step3.style.display = 'block';
+        dot2.classList.remove('active');
+        dot3.classList.add('active');
+      });
+    }
+
+    if (btnBackToStep2) {
+      btnBackToStep2.addEventListener('click', () => {
+        step3.style.display = 'none';
+        step2.style.display = 'block';
+        dot3.classList.remove('active');
+        dot2.classList.add('active');
+      });
+    }
+
+    /* Backend Lead Submission Helper */
+    async function submitLeadToBackend(payload) {
+      const data = getAgencyData();
+      const webhookUrl = (data.contact && data.contact.googleSheetsWebhookUrl) ? data.contact.googleSheetsWebhookUrl.trim() : '';
+
+      if (webhookUrl) {
+        try {
+          await fetch(webhookUrl, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+        } catch (err) {
+          console.warn('Webhook transmission notice:', err);
+        }
+      }
+    }
+
+    if (finalForm) {
+      finalForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const name = (document.getElementById('book-name') ? document.getElementById('book-name').value : '');
+        const email = (document.getElementById('book-email') ? document.getElementById('book-email').value : '');
+        const phone = (document.getElementById('book-phone') ? document.getElementById('book-phone').value : '');
+        const budget = (document.getElementById('booking-budget') ? document.getElementById('booking-budget').value : '₹30,000 - ₹75,000 / month');
+        const url = (document.getElementById('booking-url') ? document.getElementById('booking-url').value : '');
+        const goalRadio = document.querySelector('input[name="goal"]:checked');
+        const goal = goalRadio ? goalRadio.value : 'Scale Paid Ads';
+
+        // Submit to Google Sheets Backend
+        submitLeadToBackend({
+          name: name,
+          brand: url || 'Website Booking',
+          phone: phone,
+          email: email,
+          budget: budget,
+          services: goal,
+          message: 'Primary Goal: ' + goal + (url ? ' | Asset: ' + url : ''),
+          formType: '30-Day Strategy Audit Modal',
+          pageUrl: window.location.href
+        });
+
+        step3.style.display = 'none';
+        successState.style.display = 'block';
+      });
+    }
+  }
+
+  /* ==========================================================================
+     14B. AUTO-SLIDING HERO SHOWCASE CAROUSEL
+     ========================================================================== */
+  function initHeroSlider() {
+    const wrapper = document.getElementById('hero-slider-wrapper');
+    if (!wrapper) return;
+
+    const slides = wrapper.querySelectorAll('.hero-slide-item');
+    const tabs = wrapper.querySelectorAll('.slider-tab-btn');
+    const dots = wrapper.querySelectorAll('.slider-dot');
+    const prevBtn = document.getElementById('hero-slider-prev');
+    const nextBtn = document.getElementById('hero-slider-next');
+
+    if (!slides.length) return;
+
+    let currentIndex = 0;
+    const totalSlides = slides.length;
+    const slideDuration = 3600;
+    let autoSlideTimer = null;
+    let isPaused = false;
+
+    function goToSlide(index) {
+      if (index < 0) index = totalSlides - 1;
+      if (index >= totalSlides) index = 0;
+      currentIndex = index;
+
+      // Update slides
+      slides.forEach((slide, idx) => {
+        if (idx === currentIndex) {
+          slide.classList.add('active');
+        } else {
+          slide.classList.remove('active');
+        }
+      });
+
+      // Update tabs
+      tabs.forEach((tab, idx) => {
+        if (idx === currentIndex) {
+          tab.classList.add('active');
+        } else {
+          tab.classList.remove('active');
+        }
+      });
+
+      // Update dots & reset progress animation
+      dots.forEach((dot, idx) => {
+        if (idx === currentIndex) {
+          dot.classList.add('active');
+          const prog = dot.querySelector('.dot-progress');
+          if (prog) {
+            prog.style.animation = 'none';
+            dot.offsetHeight; /* trigger reflow */
+            prog.style.animation = `fillProgress ${slideDuration}ms linear forwards`;
+          }
+        } else {
+          dot.classList.remove('active');
+          const prog = dot.querySelector('.dot-progress');
+          if (prog) {
+            prog.style.animation = 'none';
+          }
+        }
+      });
+    }
+
+    function nextSlide() {
+      goToSlide(currentIndex + 1);
+    }
+
+    function prevSlide() {
+      goToSlide(currentIndex - 1);
+    }
+
+    function startAutoSlide() {
+      stopAutoSlide();
+      autoSlideTimer = setInterval(() => {
+        if (!isPaused) {
+          nextSlide();
+        }
+      }, slideDuration);
+    }
+
+    function stopAutoSlide() {
+      if (autoSlideTimer) {
+        clearInterval(autoSlideTimer);
+        autoSlideTimer = null;
+      }
+    }
+
+    // Tab buttons click
+    tabs.forEach((tab, idx) => {
+      tab.addEventListener('click', () => {
+        goToSlide(idx);
+        startAutoSlide();
+      });
+    });
+
+    // Dot indicators click
+    dots.forEach((dot, idx) => {
+      dot.addEventListener('click', () => {
+        goToSlide(idx);
+        startAutoSlide();
+      });
+    });
+
+    // Next / Prev button clicks
+    if (nextBtn) {
+      nextBtn.addEventListener('click', () => {
+        nextSlide();
+        startAutoSlide();
+      });
+    }
+
+    if (prevBtn) {
+      prevBtn.addEventListener('click', () => {
+        prevSlide();
+        startAutoSlide();
+      });
+    }
+
+    // Pause auto-sliding on hover
+    wrapper.addEventListener('mouseenter', () => {
+      isPaused = true;
+    });
+
+    wrapper.addEventListener('mouseleave', () => {
+      isPaused = false;
+    });
+
+    // Touch swipe support for mobile
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    wrapper.addEventListener('touchstart', (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+
+    wrapper.addEventListener('touchend', (e) => {
+      touchEndX = e.changedTouches[0].screenX;
+      if (touchStartX - touchEndX > 50) {
+        nextSlide();
+        startAutoSlide();
+      } else if (touchEndX - touchStartX > 50) {
+        prevSlide();
+        startAutoSlide();
+      }
+    }, { passive: true });
+
+    // Initialize first slide and start auto-slide
+    goToSlide(0);
+    startAutoSlide();
+  }
+
+  /* ==========================================================================
+     15. MAIN CONTACT FORM (Direct Lead Capture & Google Sheets Sync)
+     ========================================================================== */
+  function initContactForm() {
+    const form = document.getElementById('contact-main-form');
+    if (!form) return;
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const submitBtn = form.querySelector('button[type="submit"]');
+      const origBtnText = submitBtn ? submitBtn.innerHTML : '';
+      if (submitBtn) {
+        submitBtn.innerHTML = '<span>Processing Strategy Request...</span>';
+        submitBtn.disabled = true;
+      }
+
+      const name = document.getElementById('contact-name') ? document.getElementById('contact-name').value : '';
+      const brand = document.getElementById('contact-brand') ? document.getElementById('contact-brand').value : '';
+      const email = document.getElementById('contact-email') ? document.getElementById('contact-email').value : '';
+      const phone = document.getElementById('contact-phone') ? document.getElementById('contact-phone').value : '';
+      const budget = document.getElementById('contact-budget') ? document.getElementById('contact-budget').value : '';
+      const message = document.getElementById('contact-message') ? document.getElementById('contact-message').value : '';
+
+      const checkedBoxes = document.querySelectorAll('input[name="services"]:checked');
+      const selectedServices = Array.from(checkedBoxes).map(cb => cb.value).join(', ');
+
+      const data = getAgencyData();
+      const webhookUrl = (data.contact && data.contact.googleSheetsWebhookUrl) ? data.contact.googleSheetsWebhookUrl.trim() : '';
+
+      // Send to Google Sheets Webhook if configured
+      if (webhookUrl) {
+        try {
+          await fetch(webhookUrl, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              name: name,
+              brand: brand,
+              phone: phone,
+              email: email,
+              services: selectedServices || 'All-Round Growth',
+              budget: budget,
+              message: message,
+              formType: 'Main Contact Page Form',
+              pageUrl: window.location.href
+            })
+          });
+        } catch (err) {
+          console.warn('Webhook transmission notice:', err);
+        }
+      }
+
+      if (submitBtn) {
+        submitBtn.innerHTML = '<span>✓ Request Received! Opening WhatsApp...</span>';
+      }
+
+      const waText = encodeURIComponent(
+        `Hi Connect Digital Media! My name is ${name} from ${brand}.\nServices needed: ${selectedServices || 'Growth Strategy'}\nMonthly Budget: ${budget}\nEmail: ${email}\nPhone: ${phone}\nNote: ${message}`
+      );
+
+      setTimeout(() => {
+        window.open(`https://wa.me/918140502097?text=${waText}`, '_blank');
+        form.reset();
+        if (submitBtn) {
+          submitBtn.innerHTML = origBtnText;
+          submitBtn.disabled = false;
+        }
+      }, 700);
+    });
+  }
+
+  /* ==========================================================================
+     18. DARK / LIGHT THEME TOGGLE CONTROLLER
+     ========================================================================== */
+  function initThemeToggle() {
+    const toggleBtns = document.querySelectorAll('#theme-toggle-btn, .theme-toggle-btn');
+    
+    function applyTheme(theme) {
+      if (theme === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        localStorage.setItem('cdm_theme', 'dark');
+      } else {
+        document.documentElement.setAttribute('data-theme', 'light');
+        localStorage.setItem('cdm_theme', 'light');
+      }
+    }
+
+    // Read stored or system preference
+    const savedTheme = localStorage.getItem('cdm_theme');
+    if (savedTheme) {
+      applyTheme(savedTheme);
+    } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      applyTheme('dark');
+    }
+
+    toggleBtns.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const current = document.documentElement.getAttribute('data-theme');
+        const nextTheme = current === 'dark' ? 'light' : 'dark';
+        applyTheme(nextTheme);
+      });
+    });
+  }
+})();
